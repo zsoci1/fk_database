@@ -101,7 +101,12 @@ def get_meals_for_week(customer_id, week_start_date):
     return meals
 
 
-def update_meal(customer_id, date, new_data):
+def update_meal(customer_id, date, new_data): 
+
+    # TODO change to only edit selected data while rest is default
+    # TODO add option to halt x number of days and prolong the duration by x number of days
+
+
     """Updates a single meal entry"""
     conn = get_connection()
     cursor = conn.cursor()
