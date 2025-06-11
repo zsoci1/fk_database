@@ -46,13 +46,11 @@ def add_customer(data):
     
     customer_id = cursor.lastrowid # stores the id of the last inserted row
     
-    
-
     return customer_id
 
 
 
-# TEST
+# PRINTING DB (for testing)
 def TEST_PRINT():
     add_customer(data)
     result = cursor.execute('''SELECT * FROM customers''')
