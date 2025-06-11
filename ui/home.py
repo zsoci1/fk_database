@@ -1,6 +1,5 @@
 import customtkinter as ctk
 
-
 # Home page class
 class HomePage(ctk.CTkFrame):
     def __init__(self, parent):

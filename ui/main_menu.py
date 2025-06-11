@@ -3,7 +3,6 @@ from home import HomePage
 from add_clients import AddPage
 from edit_meals import ModPage
 
-
 # Main menu class
 class MainMenu(ctk.CTk):
     # Inicializing methods
