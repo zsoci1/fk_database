@@ -1,9 +1,9 @@
-# UPDATING SCHEMA DURING DEVELOPMENT
+# IF UPDATING SCHEMA DURING DEVELOPMENT
 import sqlite3
 
 DB_PATH = "database/meals.db"
 
-with open("schema.sql", "r") as f:
+with open("database/schema.sql", "r") as f:
     schema = f.read()
 
 with sqlite3.connect(DB_PATH) as conn:

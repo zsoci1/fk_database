@@ -1,8 +1,8 @@
 CREATE TABLE IF NOT EXISTS customers (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	name TEXT NOT NULL,
-	adress1 TEXT,
-	adress2 TEXT,
+	address1 TEXT,
+	address2 TEXT,
 	phone TEXT,
 	start_date DATE,
 	duration INTEGER NOT NULL,

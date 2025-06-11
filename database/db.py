@@ -1,8 +1,10 @@
 import sqlite3
 from logic.date_tools import calc_end_date
 
-conn = sqlite3.connect("meals.db")
-cursor = conn.cursor()
+DB_PATH = "database/meals.db"
+
+conn = sqlite3.connect(DB_PATH) # establishing connection to DB
+cursor = conn.cursor() # middleman for executing queries
 
 # test dictionary (imagine it's from UI input)
 data = {
@@ -34,7 +36,7 @@ def add_customer(data):
     cursor.execute("""
                    INSERT INTO customers (
                         name, address1, address2, phone, start_date, duration, end_date,
-                        default_size, default_type_size
+                        default_size, default_type_special
                    )
                    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)
                    """, (
@@ -43,17 +45,31 @@ def add_customer(data):
                    ))
     
     customer_id = cursor.lastrowid # stores the id of the last inserted row
-    conn.commit()
-    conn.close()
+    
+    
 
     return customer_id
 
 
-# TESTING
-add_customer(data)
-result = cursor.execute('''SELECT * FROM customers''')
-print(result)
-# TESTING
+
+# TEST
+def TEST_PRINT():
+    add_customer(data)
+    result = cursor.execute('''SELECT * FROM customers''')
+    for row in result:
+        print(row)
+
+# DELETING ALL (for testing)
+def DELETE_ALL():
+    cursor.execute('''DELETE FROM customers''')
+
+
+TEST_PRINT()
+DELETE_ALL()
+
+
+conn.commit()
+conn.close()
 
 
 
