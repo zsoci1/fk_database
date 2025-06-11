@@ -16,4 +16,3 @@ def calc_end_date(start_date, duration):
 
     return (current_date - timedelta(days=1)).strftime("%Y-%m-%d")
     
-print(calc_end_date("2025-06-11", 20)) # testing
