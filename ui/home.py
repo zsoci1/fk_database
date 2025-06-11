@@ -1,6 +1,8 @@
 import customtkinter as ctk
 
-class ModPage(ctk.CTkFrame):
+
+# Home page class
+class HomePage(ctk.CTkFrame):
     def __init__(self, parent):
         super().__init__(parent)
         self.setup_window()
@@ -8,5 +10,5 @@ class ModPage(ctk.CTkFrame):
     def setup_window(self):
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weigh=1)
-        self.label = ctk.CTkLabel(self, text="Welcome, this is the Mod page", font=("Arial", 30, "bold"))
+        self.label = ctk.CTkLabel(self, text="Home", font=("Arial", 30, "bold"))
         self.label.grid(row = 0, column = 0, pady = 30, sticky="n")
