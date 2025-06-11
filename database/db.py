@@ -1,45 +1,60 @@
 import sqlite3
+from logic.date_tools import calc_end_date
 
-# connecting to sqlite
-conn = sqlite3.connect('meals.db')
-
-# creating cursor object (for executing queries)
+conn = sqlite3.connect("meals.db")
 cursor = conn.cursor()
 
-# queries to insert data
-cursor.execute('''INSERT INTO customers (name, address1, phone, duration, default_size) VALUES ('Teszt Alany', 'Csillag utca', '0910234567', '20', 'S')''')
-cursor.execute('''INSERT INTO customers (name, address1, default_size) VALUES ('Csicsay Laci', 'Ovocny Sad', 'S')''')
-cursor.execute('''INSERT INTO customers (name) VALUES ('Suranyi Aranka')''')
-cursor.execute('''INSERT INTO customers (name) VALUES ('Varga Pal')''')
-print("Data inserted successfully")
+# test dictionary (imagine it's from UI input)
+data = {
+    "name": "Csicsay Laci",
+    "address1": "Ovocny sad",
+    "address2": "",
+    "phone": "0910 456 543",
+    "start_date": "2025-06-11",
+    "duration": 20,
+    "default_size": "S",
+    "default_type_special": "ebed,snack,vacsora"
+}
 
-data = cursor.execute('''SELECT * FROM customers''')
-for row in data:
-    print(row)
-
-
-# DELETING EVERYTHING FROM DATABASE
-cursor.execute('''DELETE FROM customers''')
-print("DATABASE CLEARED")
-
-# commit changes in the datebase
-conn.commit()
-
-# close the connection
-conn.close()
-
-
-#add customer
+# add customer
+# 'data' is a dictionary filled with user-input from UI 
 def add_customer(data):
-    name = data["name"]
-    address1 = data.get("address1", "")
+    name = data["name"] # returns the value of the name key if exists else error
+    address1 = data.get("address1", "") # returns the value but no error if doens't exist
     address2 = data.get("address2", "")
     phone = data.get("phone", "")
     start_date = data["start_date"]
     duration = data["duration"]
-    end_date = # TODO calculate_end_date() function, 2 parameters: start_date, duration
+    end_date = calc_end_date(start_date, duration) # calculate_end_date() function, 2 parameters: start_date, duration
     default_size = data["default_size"]
     default_type_special = data.get("default_type_special", "")
+
+    
+
+    cursor.execute("""
+                   INSERT INTO customers (
+                        name, address1, address2, phone, start_date, duration, end_date,
+                        default_size, default_type_size
+                   )
+                   VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)
+                   """, (
+                       name, address1, address2, phone, start_date, duration, end_date,
+                       default_size, default_type_special
+                   ))
+    
+    customer_id = cursor.lastrowid # stores the id of the last inserted row
+    conn.commit()
+    conn.close()
+
+    return customer_id
+
+
+# TESTING
+add_customer(data)
+result = cursor.execute('''SELECT * FROM customers''')
+print(result)
+# TESTING
+
 
 
 #get customer
