@@ -1,5 +1,5 @@
 import sqlite3
-from logic.date_tools import calc_end_date
+from logic.date_tools import calc_end_date, generate_working_day
 
 DB_PATH = "database/meals.db"
 
@@ -12,8 +12,8 @@ data = {
     "address1": "Ovocny sad",
     "address2": "",
     "phone": "0910 456 543",
-    "start_date": "2025-06-11",
-    "duration": 20,
+    "start_date": "2025-06-08",
+    "duration": 5,
     "default_size": "S",
     "default_type_special": "ebed,snack,vacsora"
 }
@@ -33,19 +33,34 @@ def add_customer(data):
 
     
 
-    cursor.execute("""
+    cursor.execute('''
                    INSERT INTO customers (
                         name, address1, address2, phone, start_date, duration, end_date,
                         default_size, default_type_special
                    )
                    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)
-                   """, (
+                   ''', (
                        name, address1, address2, phone, start_date, duration, end_date,
                        default_size, default_type_special
                    ))
     
     customer_id = cursor.lastrowid # stores the id of the last inserted row
     
+    working_day = generate_working_day(start_date, end_date)
+
+    # assign default values to every day from start to end date
+    for day in working_day:
+        cursor.execute('''
+                       INSERT INTO meals (customer_id, date, size, type_special)
+                       VALUES (?, ?, ?, ?)
+                       ''', (
+                        customer_id,
+                        day,
+                        default_size,
+                        default_type_special
+                       ))
+
+
     return customer_id
 
 
@@ -53,22 +68,28 @@ def add_customer(data):
 # PRINTING DB (for testing)
 def TEST_PRINT():
     add_customer(data)
-    result = cursor.execute('''SELECT * FROM customers''')
-    for row in result:
+
+    print("CUSTOMERS TABLE:")
+    customer = cursor.execute('''SELECT * FROM customers''')
+    for row in customer:
         print(row)
+    
+    print("MEALS TABLE:")
+    meals = cursor.execute('''SELECT * FROM meals''')
+    for row in meals:
+        print(row)
+    
 
 # DELETING ALL (for testing)
 def DELETE_ALL():
     cursor.execute('''DELETE FROM customers''')
+    cursor.execute('''DELETE FROM meals''')
 
 
 TEST_PRINT()
 DELETE_ALL()
-
-
 conn.commit()
 conn.close()
-
 
 
 #get customer
