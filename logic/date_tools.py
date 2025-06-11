@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, date, timedelta
 
 # kiszamolja az elofizetes lejarati datumat a start_date
 # es a duration alapjan, csak a munkanapokat (vas-csut) szamolja
@@ -32,3 +32,26 @@ def generate_working_day(start_date, end_date):
 
     return dates
 
+
+# meghatarozza az aktualis munkahetet
+
+def get_current_work_week(today=None):
+    if today is None:
+        today = date.today()
+    
+    # weekday(): Monday=0, Sunday=6
+    # Let's shift it so Sunday=0, Monday=1, ..., Saturday=6
+    shifted_weekday = (today.weekday() + 1) % 7
+
+    # Find the most recent Sunday (start of work week)
+    start_of_week = today - timedelta(days=shifted_weekday)
+
+    # Get Sunday to Thursday
+    work_week = [start_of_week + timedelta(days=i) for i in range(5)]
+
+    return work_week
+
+
+for d in get_current_work_week():
+    print(d)
+    
