@@ -16,7 +16,7 @@ def calc_end_date(start_date, duration):
     return (current_date - timedelta(days=1)).strftime("%Y-%m-%d")
 
 
-# visszaadja az osszes munkanapot (vas-csut) egy listaban a start es end date kozott
+# visszaadja az osszes munkanapot (vas-csut) egy listaban az elofiztes kezdete es vege kozott
 def generate_working_day(start_date, end_date):
 
     start_date = datetime.strptime(start_date, "%Y-%m-%d")
@@ -33,20 +33,15 @@ def generate_working_day(start_date, end_date):
     return dates
 
 
-# meghatarozza az aktualis munkahetet
-
+# visszaadja az aktualis munkahet 5 napjat datummal
 def get_current_work_week(today=None):
     if today is None:
         today = date.today()
     
-    # weekday(): Monday=0, Sunday=6
-    # Let's shift it so Sunday=0, Monday=1, ..., Saturday=6
     shifted_weekday = (today.weekday() + 1) % 7
 
-    # Find the most recent Sunday (start of work week)
     start_of_week = today - timedelta(days=shifted_weekday)
 
-    # Get Sunday to Thursday
     work_week = [start_of_week + timedelta(days=i) for i in range(5)]
 
     return work_week
