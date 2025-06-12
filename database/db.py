@@ -130,6 +130,37 @@ def update_meal_type(customer_id, date, new_value):
     conn.commit()
     conn.close()
 
+
+# EDIT PANEL -> EDIT CUSTOMER INFO (state -> under development)
+# a default ertekek (pl. nev, cim, tel.) megvaltoztatasara (kiveve start date es duration)
+def update_customer_defaults(customer_id, data):
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute('''
+                   UDPATE customers
+                   SET name = ?, address1 = ?, address2 = ?, phone = ?
+                        default_size = ?, default_type_special = ?
+                   WHERE id = ?
+                   ''', (
+                       
+                       data["name"],
+                       data.get("address1", ""),
+                       data.get("address2", ""),
+                       data.get("phone", ""),
+                       data["default_size"],
+                       data.get("default_type_special", ""),
+                       customer_id
+                   ))
+    
+    conn.commit()
+    conn.close()
+    
+
+
+
+
+
 # PRINTING DB (for testing)
 def TEST_PRINT():
     conn = sqlite3.connect(DB_PATH)
