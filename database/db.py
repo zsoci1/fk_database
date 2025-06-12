@@ -15,6 +15,7 @@ data = {
     "default_type_special": "ebed,snack,vacsora"
 }
 
+# ADD CUSTOMER PANEL
 # add customer
 # 'data' is a dictionary filled with user-input from UI 
 def add_customer(data):
@@ -64,6 +65,7 @@ def add_customer(data):
 
     return customer_id
 
+# EDIT PANEL, HOME PANEL
 # takes in a query like : "name", returns a list of closest match in asc order
 def search_customers(query):
 
@@ -81,6 +83,35 @@ def search_customers(query):
     conn.close()
 
     return results
+
+
+# EDIT PANEL
+# visszaadja az adott munkahet minden napjat es az azokhoz tartozo meretet es etkezest
+# PL 2025.06.12  S  reggeli, ebed, vacsora
+def get_meals_for_week(customer_id, start_date, end_date):
+    conn = sqlite3.connect("database/meals.db")
+    cursor = conn.cursor()
+    cursor.execute('''
+                   SELECT date, size, type_special FROM meals
+                   WHERE customer_id = ?
+                   AND date BETWEEN ? AND ?
+                   ORDER BY date ASC
+                   ''', (customer_id, start_date, end_date))
+    return cursor.fetchall()
+
+
+# EDIT PANEL
+# szerkeszteni az adott nap etkezeset
+def update_meal_type(customer_id, date, new_value):
+    conn = sqlite3.connect("database/meals.db")
+    cursor = conn.cursor()
+    cursor.execute('''
+                   UPDATE meals
+                   SET type_special = ?
+                   WHERE customer_id = ? AND date = ?
+                   ''', (new_value, customer_id, date))
+    conn.commit()
+    conn.close()
 
 # PRINTING DB (for testing)
 def TEST_PRINT():
@@ -108,4 +139,7 @@ def DELETE_ALL():
     cursor.execute('''DELETE FROM meals''')
     conn.commit()
     conn.close()
+
+
+
 
