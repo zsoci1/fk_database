@@ -100,6 +100,38 @@ def get_meals_for_week(customer_id, start_date, end_date):
     return cursor.fetchall()
 
 
+# EDIT PANEL -> EDIT CUSTOMER DATA (state -> under development)
+# visszaadja a kivalasztott customer adatait (start date, duration kivetelevel)
+def get_customer_defaults(customer_id):
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute('''
+                   SELECT name, address1, address2, phone,
+                            default_size, default_type_special
+                   FROM customers
+                   WHERE id = ?
+                   ''', (customer_id))
+    
+    result = cursor.fetchone()
+    conn.close()
+
+    if result:
+        return {
+            "name": result[0],
+            "address1": result[1],
+            "address2": result[2],
+            "phone": result[3],
+            "default_size": result[4],
+            "default_type_special": result[5]
+        }
+    else:
+        return None
+
+
+
+
+
 # EDIT PANEL (state -> tested, working)
 # szerkeszteni az adott nap etkezeset
 def update_meal_type(customer_id, date, new_value):
@@ -137,6 +169,3 @@ def DELETE_ALL():
     conn.commit()
     conn.close()
 
-
-DELETE_ALL()
-TEST_PRINT()
