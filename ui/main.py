@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from main_menu import MainMenu
+from ui.main_menu import MainMenu
 
 if __name__ == "__main__":
     root = ctk.CTk()

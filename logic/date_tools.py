@@ -8,7 +8,7 @@ def calc_end_date(start_date, duration):
     working_days = 0
     current_date = start_date
 
-    while working_days < duration:
+    while working_days < int(duration):
         if current_date.weekday() in [6, 0, 1, 2, 3]: # vasarnap - csut
             working_days += 1
         current_date += timedelta(days=1)

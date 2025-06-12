@@ -1,7 +1,7 @@
 import customtkinter as ctk
-from home import HomePage
-from add_clients import AddPage
-from edit_meals import ModPage
+from ui.home import HomePage
+from ui.add_clients import AddPage
+from ui.edit_meals import ModPage
 
 # Main menu class
 class MainMenu(ctk.CTk):
