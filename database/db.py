@@ -1,15 +1,12 @@
 import sqlite3
-from logic.date_tools import calc_end_date, generate_working_day
+from logic.date_tools import calc_end_date, generate_working_day, get_current_work_week
 
 DB_PATH = "database/meals.db"
 
-conn = sqlite3.connect(DB_PATH) # establishing connection to DB
-cursor = conn.cursor() # middleman for executing queries
-
 # test dictionary (imagine it's from UI input)
 data = {
-    "name": "Csicsay Laci",
-    "address1": "Ovocny sad",
+    "name": "Teszt Alany",
+    "address1": "DS, Ovocny sad",
     "address2": "",
     "phone": "0910 456 543",
     "start_date": "2025-06-08",
@@ -21,17 +18,19 @@ data = {
 # add customer
 # 'data' is a dictionary filled with user-input from UI 
 def add_customer(data):
+
     name = data["name"] # returns the value of the name key if exists else error
     address1 = data.get("address1", "") # returns the value but no error if doens't exist
     address2 = data.get("address2", "")
     phone = data.get("phone", "")
     start_date = data["start_date"]
     duration = data["duration"]
-    end_date = calc_end_date(start_date, duration) # calculate_end_date() function, 2 parameters: start_date, duration
+    end_date = calc_end_date(start_date, duration)
     default_size = data["default_size"]
     default_type_special = data.get("default_type_special", "")
 
-    
+    conn = sqlite3.connect(DB_PATH) # establishing connection to DB
+    cursor = conn.cursor() # middleman for executing queries
 
     cursor.execute('''
                    INSERT INTO customers (
@@ -46,10 +45,10 @@ def add_customer(data):
     
     customer_id = cursor.lastrowid # stores the id of the last inserted row
     
-    working_day = generate_working_day(start_date, end_date)
+    working_days = generate_working_day(start_date, end_date)
 
     # assign default values to every day from start to end date
-    for day in working_day:
+    for day in working_days:
         cursor.execute('''
                        INSERT INTO meals (customer_id, date, size, type_special)
                        VALUES (?, ?, ?, ?)
@@ -60,13 +59,34 @@ def add_customer(data):
                         default_type_special
                        ))
 
+    conn.commit()
+    conn.close()
 
     return customer_id
 
+# takes in a query like : "name", returns a list of closest match in asc order
+def search_customers(query):
 
+    conn = sqlite3.connect("database/meals.db")
+    cursor = conn.cursor()
+
+    cursor.execute('''
+                   SELECT id, name, phone
+                   FROM customers
+                   WHERE name LIKE ? OR phone LIKE ?
+                   ORDER BY name ASC
+                   ''', (f"%{query}%", f"%{query}%"))
+    
+    results = cursor.fetchall()
+    conn.close()
+
+    return results
 
 # PRINTING DB (for testing)
 def TEST_PRINT():
+    conn = sqlite3.connect("database/meals.db")
+    cursor = conn.cursor()
+
     add_customer(data)
 
     print("CUSTOMERS TABLE:")
@@ -74,7 +94,7 @@ def TEST_PRINT():
     for row in customer:
         print(row)
     
-    print("MEALS TABLE:")
+    print("MEALS TABLE AZ AKTUALIS HETRE:")
     meals = cursor.execute('''SELECT * FROM meals''')
     for row in meals:
         print(row)
@@ -82,20 +102,10 @@ def TEST_PRINT():
 
 # DELETING ALL (for testing)
 def DELETE_ALL():
+    conn = sqlite3.connect("database/meals.db")
+    cursor = conn.cursor()
     cursor.execute('''DELETE FROM customers''')
     cursor.execute('''DELETE FROM meals''')
+    conn.commit()
+    conn.close()
 
-
-TEST_PRINT()
-DELETE_ALL()
-conn.commit()
-conn.close()
-
-
-#get customer
-
-
-#get meals for day
-
-
-#update meal

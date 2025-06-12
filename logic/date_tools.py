@@ -50,8 +50,3 @@ def get_current_work_week(today=None):
     work_week = [start_of_week + timedelta(days=i) for i in range(5)]
 
     return work_week
-
-
-for d in get_current_work_week():
-    print(d)
-    
