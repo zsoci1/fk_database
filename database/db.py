@@ -194,16 +194,3 @@ def DELETE_ALL():
     cursor.execute('''DELETE FROM meals''')
     conn.commit()
     conn.close()
-
-
-
-TEST_PRINT()
-
-data = {
-    "name": "Megvaltozott nev",
-    "address1": "uj cim",
-    "address2": "",
-    "phone": "0910456341",
-    "default_size": "XL",
-    "default_type_special": "reggeli, ebed, snack, vacsora"
-} 
