@@ -15,7 +15,7 @@ data = {
     "default_type_special": "ebed,snack,vacsora"
 }
 
-# ADD CUSTOMER PANEL
+# ADD CUSTOMER PANEL (state -> tested, working)
 # add customer
 # 'data' is a dictionary filled with user-input from UI 
 def add_customer(data):
@@ -65,7 +65,7 @@ def add_customer(data):
 
     return customer_id
 
-# EDIT PANEL, HOME PANEL
+# EDIT PANEL, HOME PANEL (state -> tested, working)
 # takes in a query like : "name", returns a list of closest match in asc order
 def search_customers(query):
 
@@ -85,7 +85,7 @@ def search_customers(query):
     return results
 
 
-# EDIT PANEL
+# EDIT PANEL (state -> tested, working)
 # visszaadja az adott munkahet minden napjat es az azokhoz tartozo meretet es etkezest
 # PL 2025.06.12  S  reggeli, ebed, vacsora
 def get_meals_for_week(customer_id, start_date, end_date):
@@ -100,7 +100,7 @@ def get_meals_for_week(customer_id, start_date, end_date):
     return cursor.fetchall()
 
 
-# EDIT PANEL
+# EDIT PANEL (state -> tested, working)
 # szerkeszteni az adott nap etkezeset
 def update_meal_type(customer_id, date, new_value):
     conn = sqlite3.connect(DB_PATH)
@@ -128,7 +128,6 @@ def TEST_PRINT():
     for row in meals:
         print(row)
     
-
 # DELETING ALL (for testing)
 def DELETE_ALL():
     conn = sqlite3.connect(DB_PATH)
@@ -137,3 +136,7 @@ def DELETE_ALL():
     cursor.execute('''DELETE FROM meals''')
     conn.commit()
     conn.close()
+
+
+DELETE_ALL()
+TEST_PRINT()
