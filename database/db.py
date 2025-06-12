@@ -3,18 +3,6 @@ from logic.date_tools import calc_end_date, generate_working_day, get_current_wo
 
 DB_PATH = "database/meals.db"
 
-# test dictionary (imagine it's from UI input)
-data = {
-    "name": "Teszt Alany",
-    "address1": "DS, Ovocny sad",
-    "address2": "",
-    "phone": "0910 456 543",
-    "start_date": "2025-06-08",
-    "duration": 5,
-    "default_size": "S",
-    "default_type_special": "ebed,snack,vacsora"
-}
-
 # ADD CUSTOMER PANEL (state -> tested, working)
 # add customer
 # 'data' is a dictionary filled with user-input from UI 
@@ -111,7 +99,7 @@ def get_customer_defaults(customer_id):
                             default_size, default_type_special
                    FROM customers
                    WHERE id = ?
-                   ''', (customer_id))
+                   ''', (customer_id,))
     
     result = cursor.fetchone()
     conn.close()
@@ -127,9 +115,6 @@ def get_customer_defaults(customer_id):
         }
     else:
         return None
-
-
-
 
 
 # EDIT PANEL (state -> tested, working)
@@ -169,3 +154,6 @@ def DELETE_ALL():
     conn.commit()
     conn.close()
 
+
+
+TEST_PRINT()
