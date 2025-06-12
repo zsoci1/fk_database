@@ -1,4 +1,5 @@
 import sqlite3
+from datetime import datetime
 from logic.date_tools import calc_end_date, generate_working_day, get_current_work_week
 
 DB_PATH = "database/meals.db"
@@ -138,12 +139,11 @@ def update_customer_defaults(customer_id, data):
     cursor = conn.cursor()
 
     cursor.execute('''
-                   UDPATE customers
-                   SET name = ?, address1 = ?, address2 = ?, phone = ?
+                   UPDATE customers
+                   SET name = ?, address1 = ?, address2 = ?, phone = ?,
                         default_size = ?, default_type_special = ?
                    WHERE id = ?
-                   ''', (
-                       
+                   ''', (         
                        data["name"],
                        data.get("address1", ""),
                        data.get("address2", ""),
@@ -153,12 +153,22 @@ def update_customer_defaults(customer_id, data):
                        customer_id
                    ))
     
+    today = datetime.today().strftime("%Y-%m-%d")
+
+    cursor.execute('''
+                   UPDATE meals
+                   SET size = ?, type_special = ?
+                   WHERE customer_id = ?
+                   AND date >= ?
+                   ''', (
+                       data["default_size"],
+                       data["default_type_special"],
+                       customer_id,
+                       today
+                   ))
+
     conn.commit()
     conn.close()
-    
-
-
-
 
 
 # PRINTING DB (for testing)
@@ -187,4 +197,18 @@ def DELETE_ALL():
 
 
 
+TEST_PRINT()
+
+data = {
+    "name": "Megvaltozott nev",
+    "address1": "uj cim",
+    "address2": "",
+    "phone": "0910456341",
+    "default_size": "XL",
+    "default_type_special": "reggeli, ebed, snack, vacsora"
+} 
+
+update_customer_defaults(36, data)
+TEST_PRINT()
+DELETE_ALL()
 TEST_PRINT()
