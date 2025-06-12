@@ -69,7 +69,7 @@ def add_customer(data):
 # takes in a query like : "name", returns a list of closest match in asc order
 def search_customers(query):
 
-    conn = sqlite3.connect("database/meals.db")
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
     cursor.execute('''
@@ -89,7 +89,7 @@ def search_customers(query):
 # visszaadja az adott munkahet minden napjat es az azokhoz tartozo meretet es etkezest
 # PL 2025.06.12  S  reggeli, ebed, vacsora
 def get_meals_for_week(customer_id, start_date, end_date):
-    conn = sqlite3.connect("database/meals.db")
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     cursor.execute('''
                    SELECT date, size, type_special FROM meals
@@ -103,7 +103,7 @@ def get_meals_for_week(customer_id, start_date, end_date):
 # EDIT PANEL
 # szerkeszteni az adott nap etkezeset
 def update_meal_type(customer_id, date, new_value):
-    conn = sqlite3.connect("database/meals.db")
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     cursor.execute('''
                    UPDATE meals
@@ -115,10 +115,8 @@ def update_meal_type(customer_id, date, new_value):
 
 # PRINTING DB (for testing)
 def TEST_PRINT():
-    conn = sqlite3.connect("database/meals.db")
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
-
-    add_customer(data)
 
     print("CUSTOMERS TABLE:")
     customer = cursor.execute('''SELECT * FROM customers''')
@@ -133,13 +131,9 @@ def TEST_PRINT():
 
 # DELETING ALL (for testing)
 def DELETE_ALL():
-    conn = sqlite3.connect("database/meals.db")
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     cursor.execute('''DELETE FROM customers''')
     cursor.execute('''DELETE FROM meals''')
     conn.commit()
     conn.close()
-
-
-
-

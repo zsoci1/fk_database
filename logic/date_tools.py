@@ -62,8 +62,8 @@ def get_current_week_range():
         sunday = today - timedelta(days=days_since_sunday)
     
     thursday = sunday + timedelta(days=4)
-    start_str = sunday.strftime("%Y.%m.%d") # vasarnap EV.HONAP.NAP
-    end_srt = thursday.strftime("%m.%d") # csutortok HONAP.NAP
+    start_str = sunday.strftime("%Y-%m-%d") # vasarnap 
+    end_srt = thursday.strftime("%Y-%m-%d")  # csutortok
 
     return (start_str, end_srt)
 
