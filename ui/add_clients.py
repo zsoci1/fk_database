@@ -8,7 +8,7 @@ from database.db import add_customer
 class AddPage(ctk.CTkFrame):
     def __init__(self, parent):
         super().__init__(parent)
-        self.setup_window()
+        self.setup_frame()
         self.data = {
             "name":"",
             "address1":"",
@@ -22,10 +22,11 @@ class AddPage(ctk.CTkFrame):
         self.checkbox_vars=[]
         self.special_entries =[]
         self.meal_data = ["reggeli", "ebed", "snack", "vacsora"]
+        self.is_correct = False
         self.user_input()
     
-
-    def setup_window(self):
+    # Frame beallitasai
+    def setup_frame(self):
         self.grid_columnconfigure(0, weight=0)
         self.grid_rowconfigure(0, weigh=0)
         self.label = ctk.CTkLabel(self, text="Hozzáadás", font=("Arial", 30, "bold"))
@@ -93,53 +94,76 @@ class AddPage(ctk.CTkFrame):
             idx +=1
 
         # Mentes gomb
-        self.save_label = ctk.CTkButton(self,text="Mentés", width=200, command=self.save_input)
+        self.save_label = ctk.CTkButton(self,text="Mentés", width=200, command=self.error_handling)
         self.save_label.grid(row=12, column=0, padx=20, pady=(40,0), sticky="w")
 
-    def save_input(self):
-        is_correct = False
+    # Input hiba kezeles popup windowokkal
+    def error_handling(self):
         if self.name_entry.get().strip() == "":
-           CTkMessagebox.messagebox(title='Hiba', text='A Név mező nem lehet üres.', sound='on', button_text='OK')
+            CTkMessagebox.messagebox(title='Hiba', text='A Név mező nem lehet üres.', sound='on', button_text='OK')
         elif self.date_picker.get().strip() == "":
             CTkMessagebox.messagebox(title='Hiba', text='Az Előfizetés kezdete mező nem lehet üres.', sound='on', button_text='OK')
         elif self.duration_entry.get().strip() == "":
             CTkMessagebox.messagebox(title='Hiba', text='Az Előfizetés időtartama mező nem lehet üres.', sound='on', button_text='OK')
         elif self.duration_entry.get().strip().isdigit() == False:
             CTkMessagebox.messagebox(title='Hiba', text='Az Előfizetés időtartamának egy számnak kell lennie.', sound='on', button_text='OK')
+            self.delete_input(self.duration_entry)
         elif self.size_combobox.get().strip() == "":
             CTkMessagebox.messagebox(title='Hiba', text='A Méret mező nem lehet üres.', sound='on', button_text='OK')
         else:
             for var in (self.checkbox_vars):
                 checkbox_value = var.get()
                 if checkbox_value == True:
-                    is_correct = True
-            if is_correct == False:
+                    self.is_correct = True
+            if self.is_correct == False:
                 CTkMessagebox.messagebox(title='Hiba', text='A Típus mező nem lehet üres.', sound='on', button_text='OK')
+            else:
+                # Ha minden elfogadhato, akkor meghvjuk a save_and_reset fuggvenyt
+                self.save_and_reset_input()
 
-        # Mentes
-        if is_correct == True:
+    # Mentes es input torlese
+    def save_and_reset_input(self):
+        if self.is_correct == True:
             self.data["name"] = self.name_entry.get()
+            self.delete_input(self.name_entry)
             self.data["phone"] = self.phone_entry.get()
+            self.delete_input(self.phone_entry)
             self.data["address1"] = self.first_address_entry.get()
+            self.delete_input(self.first_address_entry)
             self.data["address2"] = self.second_address_entry.get()
+            self.delete_input(self.second_address_entry)
             self.data["start_date"] = self.date_picker.get()
+            self.delete_input(self.date_picker)
             self.data["duration"] = self.duration_entry.get()
+            self.delete_input(self.duration_entry)
             self.data["default_size"] = self.size_combobox.get()
+            self.size_combobox.set("")
+
             special_data = []
             for meal, var, entry in zip(self.meal_data, self.checkbox_vars, self.special_entries):
 
                 checkbox_value = var.get()
                 entry_value = entry.get()
 
+                # Ha a checkbox ki van pipalva
                 if checkbox_value == True:
-                    # Ha ures a specialis input:
+                    # Ha a specialis entry ures
                     if entry_value.strip() == "":
                         special_data.append(meal)
                     else:
                         special_data.append(f"{meal}:{entry_value}")
-
+            # Hozzaadjuk a listat a dict-hez
             self.data["default_type_special"] = ", ".join(special_data)
-            print(self.data)
+
+            # Checkbox es Entry inputok torlese
+            for entry in self.special_entries:
+                entry.delete(0, 'end')
+            for var in self.checkbox_vars:
+                var.set(False)
 
             add_customer(self.data)
+
+    # Inputok torlese
+    def delete_input(self,input):
+        input.delete(0, 'end')
 
