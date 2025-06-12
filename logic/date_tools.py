@@ -45,3 +45,25 @@ def get_current_work_week(today=None):
     work_week = [start_of_week + timedelta(days=i) for i in range(5)]
 
     return work_week
+
+
+# visszadadja az aktualis munkahet elso es utolso napjat (start_date_srt, end_date_str)
+# vas csut
+def get_current_week_range():
+
+    today = datetime.today()
+    weekday = today.weekday()
+
+    if weekday in [4, 5]:
+        days_until_sunday = (6 - weekday + 7) % 7 or 7
+        sunday = today + timedelta(days=days_until_sunday)
+    else:
+        days_since_sunday = (weekday - 6) % 7
+        sunday = today - timedelta(days=days_since_sunday)
+    
+    thursday = sunday + timedelta(days=4)
+    start_str = sunday.strftime("%Y.%m.%d") # vasarnap EV.HONAP.NAP
+    end_srt = thursday.strftime("%m.%d") # csutortok HONAP.NAP
+
+    return (start_str, end_srt)
+
