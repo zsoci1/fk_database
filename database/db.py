@@ -89,7 +89,7 @@ def get_meals_for_week(customer_id, start_date, end_date):
     return cursor.fetchall()
 
 
-# EDIT PANEL -> EDIT CUSTOMER DATA (state -> under development)
+# EDIT PANEL -> EDIT CUSTOMER DATA (state -> tested, working)
 # visszaadja a kivalasztott customer adatait (start date, duration kivetelevel)
 def get_customer_defaults(customer_id):
     conn = sqlite3.connect(DB_PATH)
@@ -132,7 +132,7 @@ def update_meal_type(customer_id, date, new_value):
     conn.close()
 
 
-# EDIT PANEL -> EDIT CUSTOMER INFO (state -> under development)
+# EDIT PANEL -> EDIT CUSTOMER INFO (state -> tested, working)
 # a default ertekek (pl. nev, cim, tel.) megvaltoztatasara (kiveve start date es duration)
 def update_customer_defaults(customer_id, data):
     conn = sqlite3.connect(DB_PATH)
@@ -207,8 +207,3 @@ data = {
     "default_size": "XL",
     "default_type_special": "reggeli, ebed, snack, vacsora"
 } 
-
-update_customer_defaults(36, data)
-TEST_PRINT()
-DELETE_ALL()
-TEST_PRINT()
