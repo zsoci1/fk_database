@@ -175,7 +175,7 @@ def update_customer_defaults(customer_id, data):
 
 
 # EDIT PANEL -> EDIT SUBSCRIPTION & EDIT DURATION
-# beker egy customer_id 
+# megkapja: customer_id 
 # visszaad egy dictionary-t ami tartalmazza: nev, tel, start_date, duration, end_date es REMAINING DAYS
 def get_subscription_info(customer_id):
     conn = sqlite3.connect(DB_PATH)
@@ -211,6 +211,26 @@ def get_subscription_info(customer_id):
         "remaining_days": remaining
     }
 
+
+# EDIT PANEL -> EDIT SUBSCRIPTION -> STOP SUBSCRIPTION (NOT WORKING)
+# megkapja: customer_id
+# atallitja az end_date-et mai napra igy az adatok nem torlodnek de az elofizetes veget er
+def stop_subscription(customer_id):
+    today = datetime.today().strftime("%Y-%m-%d")
+
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute('''
+                   UPDATE customers
+                   SET end_date = ?
+                   WHERE id = ?
+                   ''', (today, customer_id))
+    
+    conn.commit()
+    conn.close()
+
+
 # PRINTING DB (for testing)
 def TEST_PRINT():
     conn = sqlite3.connect(DB_PATH)
@@ -221,7 +241,7 @@ def TEST_PRINT():
     for row in customer:
         print(row)
     
-    print("MEALS TABLE AZ AKTUALIS HETRE:")
+    print("MEALS TABLE:")
     meals = cursor.execute('''SELECT * FROM meals''')
     for row in meals:
         print(row)
@@ -235,4 +255,6 @@ def DELETE_ALL():
     conn.commit()
     conn.close()
 
-DELETE_ALL()
+TEST_PRINT()
+stop_subscription(2)
+TEST_PRINT()
