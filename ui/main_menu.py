@@ -11,8 +11,17 @@ class MainMenu(ctk.CTk):
         self.current_frame = None
         self.setup_window()
         self.create_widgets()
+        # Load all pages into a dictionary
+        self.pages = {
+            HomePage:HomePage(self.content_frame),
+            AddPage:AddPage(self.content_frame),
+            ModPage:ModPage(self.content_frame)
+        }
+        for page in self.pages.values():    
+            page.grid(row=0, column=0, sticky="nsew")
+            page.grid_remove()
         self.create_buttons()
-        # Default page
+        # Show efault page
         self.show_page(HomePage)
 
     # Setting up window
@@ -43,7 +52,7 @@ class MainMenu(ctk.CTk):
 
     # Creating buttons in sidebar_frame
     def create_buttons(self):   
-        self.home_btn = ctk.CTkButton(self.sidebar_frame, text = "Home", font=("Arial", 26, "bold" ), command=lambda:self.show_page(HomePage))
+        self.home_btn = ctk.CTkButton(self.sidebar_frame, text = "Ügyfelek", font=("Arial", 26, "bold" ), command=lambda:self.show_page(HomePage))
         self.home_btn.grid(row = 1, column = 0, padx = 20, pady = 30)
 
         self.add_clients_btn = ctk.CTkButton(self.sidebar_frame, text = "Hozzáadás", font=("Arial", 26, "bold" ), command=lambda:self.show_page(AddPage))
@@ -55,10 +64,10 @@ class MainMenu(ctk.CTk):
         self.exit_btn = ctk.CTkButton(self.sidebar_frame, text = "Kilépés", font=("Arial", 26, "bold" ), command=self.master.destroy)
         self.exit_btn.grid(row = 4, column = 0, padx = 20, pady = 30)
 
-    def show_page(self, page_class):
-        # Destroying the current_frame if it exists
+    def show_page(self, page_name):
+        # Hiding the current_frame if it exists
         if self.current_frame:
-            self.current_frame.destroy()
+            self.current_frame.grid_remove()
         # Creating page_class object
-        self.current_frame = page_class(self.content_frame)
-        self.current_frame.grid(row = 0, sticky = "nsew")
+        self.current_frame = self.pages[page_name]
+        self.current_frame.grid()

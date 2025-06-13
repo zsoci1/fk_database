@@ -9,5 +9,5 @@ class HomePage(ctk.CTkFrame):
     def setup_window(self):
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weigh=1)
-        self.label = ctk.CTkLabel(self, text="Home", font=("Arial", 30, "bold"))
-        self.label.grid(row = 0, column = 0, pady = 30, sticky="n")
+        self.label = ctk.CTkLabel(self, text="Ügyfelek", font=("Arial", 30, "bold"))
+        self.label.grid(row = 0, column = 0, padx =20, pady =30, sticky="nw")
