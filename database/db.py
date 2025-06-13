@@ -171,6 +171,43 @@ def update_customer_defaults(customer_id, data):
     conn.close()
 
 
+# EDIT PANEL -> EDIT SUBSCRIPTION & EDIT DURATION
+# beker egy customer_id, visszaad egy dictionary-t ami tartalmazza: nev, tel, start_date,
+# duration, end_date es REMAINING DAYS
+def get_subscription_info(customer_id):
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute('''
+                   SELECT name, phone, start_date, duration, end_date
+                   FROM customers
+                   WHERE id = ?
+                   ''', (customer_id,))
+    
+    row = cursor.fetchone()
+    conn.close()
+
+    if not row:
+        return None
+    
+    name, phone, start_date, duration, end_date = row # tuple unpacking
+
+    today = datetime.today().date()
+    if end_date:
+        end_date_obj = datetime.strptime(end_date, "%Y-%m-%d").date()
+        remaining = max((end_date_obj - today).days + 1, 0)
+    else:
+        remaining = 0
+
+    return {
+        "name": name,
+        "phone": phone,
+        "start_date": start_date,
+        "duration": duration,
+        "end_date": end_date,
+        "remaining_days": remaining
+    }
+
 # PRINTING DB (for testing)
 def TEST_PRINT():
     conn = sqlite3.connect(DB_PATH)
@@ -194,5 +231,3 @@ def DELETE_ALL():
     cursor.execute('''DELETE FROM meals''')
     conn.commit()
     conn.close()
-
-DELETE_ALL()
