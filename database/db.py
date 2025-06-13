@@ -174,7 +174,7 @@ def update_customer_defaults(customer_id, data):
     conn.close()
 
 
-# EDIT PANEL -> EDIT SUBSCRIPTION & EDIT DURATION
+# EDIT PANEL -> EDIT SUBSCRIPTION & STATE OF SUBSCRIPTION
 # megkapja: customer_id 
 # visszaad egy dictionary-t ami tartalmazza: nev, tel, start_date, duration, end_date es REMAINING DAYS
 def get_subscription_info(customer_id):
@@ -233,9 +233,57 @@ def stop_subscription(customer_id):
                    AND date > ?
                    ''', (customer_id, today))
 
+    cursor.execute('''
+                   UPDATE customers
+                   SET duration = ?
+                   WHERE id = ?
+                   ''', (0, customer_id))
     conn.commit()
     conn.close()
 
+# EDIT PANEL -> EDIT SUBSCRIPTION -> ACTIVATE SUBSCRIPTION (not working)
+def activate_subscription(customer_id, start_date, duration):
+    end_date = calc_end_date(start_date, duration)
+
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    # update customer with new subscription data
+    cursor.execute('''
+                   UPDATE customers
+                   SET start_date = ?, duration = ?, end_date = ?
+                   WHERE id = ?
+                   ''', (start_date, duration, end_date, customer_id))
+    
+
+    # delete future meals (starting from new start_date)
+    cursor.execute('''
+                   DELETE FROM meals
+                   WHERE customer_id = ?
+                   AND date >= ?
+                   ''', (customer_id, start_date))
+    
+    # fetch default values from customers table
+    cursor.execute('''
+                   SELECT default_size, default_type_special
+                   FROM customers
+                   WHERE id = ?
+                   ''', (customer_id,))
+
+    default_row = cursor.fetchone()
+
+    if default_row:
+        default_size, default_type_special = default_row
+        working_days = generate_working_day(start_date, end_date)
+
+        for day in working_days:
+            cursor.execute('''
+                           INSERT INTO meals (customer_id, date, size, type_special)
+                           VALUES (?, ?, ?, ?)
+                           ''', (customer_id, day, default_size, default_type_special))
+            
+    conn.commit()
+    conn.close()
 
 # PRINTING DB (for testing)
 def TEST_PRINT():
@@ -261,7 +309,3 @@ def DELETE_ALL():
     conn.commit()
     conn.close()
 
-
-TEST_PRINT()
-stop_subscription(1)
-TEST_PRINT()
