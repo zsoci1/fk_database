@@ -212,7 +212,7 @@ def get_subscription_info(customer_id):
     }
 
 
-# EDIT PANEL -> EDIT SUBSCRIPTION -> STOP SUBSCRIPTION (NOT WORKING)
+# EDIT PANEL -> EDIT SUBSCRIPTION -> STOP SUBSCRIPTION 
 # megkapja: customer_id
 # atallitja az end_date-et mai napra igy az adatok nem torlodnek de az elofizetes veget er
 def stop_subscription(customer_id):
@@ -227,6 +227,12 @@ def stop_subscription(customer_id):
                    WHERE id = ?
                    ''', (today, customer_id))
     
+    cursor.execute('''
+                   DELETE FROM meals
+                   WHERE customer_id = ?
+                   AND date > ?
+                   ''', (customer_id, today))
+
     conn.commit()
     conn.close()
 
@@ -254,3 +260,8 @@ def DELETE_ALL():
     cursor.execute('''DELETE FROM meals''')
     conn.commit()
     conn.close()
+
+
+TEST_PRINT()
+stop_subscription(1)
+TEST_PRINT()
