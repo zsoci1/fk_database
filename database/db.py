@@ -254,7 +254,3 @@ def DELETE_ALL():
     cursor.execute('''DELETE FROM meals''')
     conn.commit()
     conn.close()
-
-TEST_PRINT()
-stop_subscription(2)
-TEST_PRINT()
