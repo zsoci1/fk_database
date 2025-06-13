@@ -241,7 +241,7 @@ def stop_subscription(customer_id):
     conn.commit()
     conn.close()
 
-# EDIT PANEL -> EDIT SUBSCRIPTION -> ACTIVATE SUBSCRIPTION (not working)
+# EDIT PANEL -> EDIT SUBSCRIPTION -> ACTIVATE SUBSCRIPTION 
 def activate_subscription(customer_id, start_date, duration):
     end_date = calc_end_date(start_date, duration)
 
@@ -309,3 +309,4 @@ def DELETE_ALL():
     conn.commit()
     conn.close()
 
+# DELETE_ALL()
