@@ -4,9 +4,8 @@ from logic.date_tools import calc_end_date, generate_working_day, get_current_wo
 
 DB_PATH = "database/meals.db"
 
-# ADD CUSTOMER PANEL (state -> tested, working)
-# add customer
-# 'data' is a dictionary filled with user-input from UI 
+# ADD CUSTOMER PANEL 
+# megkap egy "data" dictionary-t a UI-bol es elmenti az adatbazisba
 def add_customer(data):
 
     name = data["name"] # returns the value of the name key if exists else error
@@ -54,8 +53,9 @@ def add_customer(data):
 
     return customer_id
 
-# EDIT PANEL, HOME PANEL (state -> tested, working)
-# takes in a query like : "name", returns a list of closest match in asc order
+# EDIT PANEL, HOME PANEL 
+# megkap egy stringet -> query pl "Nev"
+# visszaad egy listat minden kozeli talalatrol
 def search_customers(query):
 
     conn = sqlite3.connect(DB_PATH)
@@ -74,9 +74,10 @@ def search_customers(query):
     return results
 
 
-# EDIT PANEL (state -> tested, working)
+# EDIT PANEL
+# megkapja: customer_id, start_date, end_date
 # visszaadja az adott munkahet minden napjat es az azokhoz tartozo meretet es etkezest
-# PL 2025.06.12  S  reggeli, ebed, vacsora
+# PL egy sor -> 2025.06.12  S  reggeli, ebed, vacsora
 def get_meals_for_week(customer_id, start_date, end_date):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
@@ -89,8 +90,9 @@ def get_meals_for_week(customer_id, start_date, end_date):
     return cursor.fetchall()
 
 
-# EDIT PANEL -> EDIT CUSTOMER DATA (state -> tested, working)
-# visszaadja a kivalasztott customer adatait (start date, duration kivetelevel)
+# EDIT PANEL -> EDIT CUSTOMER DATA 
+# megkapja: customer_id
+# visszaadja customer default adatait (start date, duration kivetelevel)
 def get_customer_defaults(customer_id):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
@@ -118,8 +120,9 @@ def get_customer_defaults(customer_id):
         return None
 
 
-# EDIT PANEL (state -> tested, working)
-# szerkeszteni az adott nap etkezeset
+# EDIT PANEL 
+# megkapja: customer_id, date, new_value
+# szerkeszti az adott nap etkezeset a type_specialt a meals table-ben
 def update_meal_type(customer_id, date, new_value):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
@@ -132,7 +135,7 @@ def update_meal_type(customer_id, date, new_value):
     conn.close()
 
 
-# EDIT PANEL -> EDIT CUSTOMER INFO (state -> tested, working)
+# EDIT PANEL -> EDIT CUSTOMER INFO 
 # a default ertekek (pl. nev, cim, tel.) megvaltoztatasara (kiveve start date es duration)
 def update_customer_defaults(customer_id, data):
     conn = sqlite3.connect(DB_PATH)
@@ -170,6 +173,43 @@ def update_customer_defaults(customer_id, data):
     conn.commit()
     conn.close()
 
+
+# EDIT PANEL -> EDIT SUBSCRIPTION & EDIT DURATION
+# beker egy customer_id 
+# visszaad egy dictionary-t ami tartalmazza: nev, tel, start_date, duration, end_date es REMAINING DAYS
+def get_subscription_info(customer_id):
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute('''
+                   SELECT name, phone, start_date, duration, end_date
+                   FROM customers
+                   WHERE id = ?
+                   ''', (customer_id,))
+    
+    row = cursor.fetchone()
+    conn.close()
+
+    if not row:
+        return None
+    
+    name, phone, start_date, duration, end_date = row # tuple unpacking
+
+    today = datetime.today().date()
+    if end_date:
+        end_date_obj = datetime.strptime(end_date, "%Y-%m-%d").date()
+        remaining = max((end_date_obj - today).days + 1, 0)
+    else:
+        remaining = 0
+
+    return {
+        "name": name,
+        "phone": phone,
+        "start_date": start_date,
+        "duration": duration,
+        "end_date": end_date,
+        "remaining_days": remaining
+    }
 
 # PRINTING DB (for testing)
 def TEST_PRINT():
