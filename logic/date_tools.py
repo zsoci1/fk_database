@@ -1,7 +1,7 @@
 from datetime import datetime, date, timedelta
 
-# kiszamolja az elofizetes lejarati datumat a start_date
-# es a duration alapjan, csak a munkanapokat (vas-csut) szamolja
+# megakapja: start_date, duration az adatbazisbol
+# visszaadja az end_date-t stringkent pl: -> "2025-06-10"
 def calc_end_date(start_date, duration):
 
     start_date = datetime.strptime(start_date,"%Y-%m-%d")
@@ -15,8 +15,8 @@ def calc_end_date(start_date, duration):
 
     return (current_date - timedelta(days=1)).strftime("%Y-%m-%d")
 
-
-# visszaadja az osszes munkanapot (vas-csut) egy listaban az elofiztes kezdete es vege kozott
+# megkapja: start_date, end_date
+# visszaadja egy listat az osszes munkanappal (vas-csut) az elofiztes kezdete es vege kozott
 def generate_working_day(start_date, end_date):
 
     start_date = datetime.strptime(start_date, "%Y-%m-%d")
@@ -33,7 +33,7 @@ def generate_working_day(start_date, end_date):
     return dates
 
 
-# visszaadja az aktualis munkahet 5 napjat datummal
+# visszaadja egy listat az aktualis munkahet 5 napjaval pl: datetime.date(2025, 6, 8), ...
 def get_current_work_week(today=None):
     if today is None:
         today = date.today()
@@ -46,9 +46,8 @@ def get_current_work_week(today=None):
 
     return work_week
 
-
-# visszadadja az aktualis munkahet elso es utolso napjat (start_date_srt, end_date_str)
-# vas csut
+# visszaad egy listat ket string-el: az aktualis munkahet elso es utolso napja
+# ilyen formaban ('2025-06-15', '2025-06-19')
 def get_current_week_range():
 
     today = datetime.today()
@@ -66,4 +65,6 @@ def get_current_week_range():
     end_srt = thursday.strftime("%Y-%m-%d")  # csutortok
 
     return (start_str, end_srt)
+
+
 
