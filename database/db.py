@@ -17,6 +17,8 @@ def add_customer(data):
     weekend_meal = data["weekend_meal"]
     default_size = data["default_size"]
     default_type_special = data.get("default_type_special", "")
+    price_day = int(data.get("price_day", 0))
+
 
     end_date = calc_end_date(start_date, duration, weekend_meal_enabled=weekend_meal)
 
@@ -26,12 +28,12 @@ def add_customer(data):
     cursor.execute('''
                    INSERT INTO customers (
                         name, address1, address2, phone, start_date, duration, end_date,
-                        default_size, default_type_special, weekend_meal
+                        default_size, default_type_special, weekend_meal, price_day
                    )
                    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                    ''', (
                        name, address1, address2, phone, start_date, duration, end_date,
-                       default_size, default_type_special, weekend_meal
+                       default_size, default_type_special, weekend_meal, price_day
                    ))
     
     customer_id = cursor.lastrowid # stores the id of the last inserted row
@@ -49,9 +51,9 @@ def add_customer(data):
             type_special = default_type_special
 
         cursor.execute('''
-                       INSERT INTO meals (customer_id, date, size, type_special)
+                       INSERT INTO meals (customer_id, date, size, type_special, price_day)
                        VALUES (?, ?, ?, ?)
-                       ''', (customer_id, meal_date, default_size, type_special))
+                       ''', (customer_id, meal_date, default_size, type_special, price_day))
 
 
     conn.commit()
@@ -142,7 +144,7 @@ def update_meal_type(customer_id, date, new_value):
     conn.close()
 
 
-# EDIT PANEL -> EDIT CUSTOMER INFO 
+# EDIT PANEL -> EDIT CUSTOMER INFO (NEEDS TESTING)
 # a default ertekek (pl. nev, cim, tel.) megvaltoztatasara (kiveve start date es duration)
 def update_customer_defaults(customer_id, data):
     conn = sqlite3.connect(DB_PATH)
@@ -150,16 +152,18 @@ def update_customer_defaults(customer_id, data):
 
     cursor.execute('''
                    UPDATE customers
-                   SET name = ?, address1 = ?, address2 = ?, phone = ?,
-                        default_size = ?, default_type_special = ?
+                   SET name = ?, address1 = ?, address2 = ?, phone = ?, weekend_meal = ?,
+                        default_size = ?, default_type_special = ?, price_day = ? 
                    WHERE id = ?
                    ''', (         
                        data["name"],
                        data.get("address1", ""),
                        data.get("address2", ""),
                        data.get("phone", ""),
+                       data["weekend_meal"],
                        data["default_size"],
                        data.get("default_type_special", ""),
+                       data["price_day"],
                        customer_id
                    ))
     
@@ -167,12 +171,13 @@ def update_customer_defaults(customer_id, data):
 
     cursor.execute('''
                    UPDATE meals
-                   SET size = ?, type_special = ?
+                   SET size = ?, type_special = ?, price_day = ?
                    WHERE customer_id = ?
                    AND date >= ?
                    ''', (
                        data["default_size"],
                        data["default_type_special"],
+                       data["price_day"],
                        customer_id,
                        today
                    ))
