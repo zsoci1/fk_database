@@ -51,7 +51,7 @@ def add_customer(data):
         cursor.execute('''
                        INSERT INTO meals (customer_id, date, size, type_special)
                        VALUES) (?, ?, ?, ?)
-                       ''', (customer_id, meal_date, default_size, type_special)
+                       ''', (customer_id, meal_date, default_size, type_special))
 
 
     conn.commit()
