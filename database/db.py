@@ -1,6 +1,6 @@
 import sqlite3
 from datetime import datetime
-from logic.date_tools import calc_end_date, generate_working_day, get_current_work_week
+from logic.date_tools import calc_end_date, generate_meal_days, get_current_work_week
 
 DB_PATH = "database/meals.db"
 
@@ -14,9 +14,11 @@ def add_customer(data):
     phone = data.get("phone", "")
     start_date = data["start_date"]
     duration = data["duration"]
-    end_date = calc_end_date(start_date, duration)
+    weekend_meal = data["weekend_meal"]
     default_size = data["default_size"]
     default_type_special = data.get("default_type_special", "")
+
+    end_date = calc_end_date(start_date, duration, weekend_meal_enabled=weekend_meal)
 
     conn = sqlite3.connect(DB_PATH) # establishing connection to DB
     cursor = conn.cursor() # middleman for executing queries
@@ -24,29 +26,33 @@ def add_customer(data):
     cursor.execute('''
                    INSERT INTO customers (
                         name, address1, address2, phone, start_date, duration, end_date,
-                        default_size, default_type_special
+                        default_size, default_type_special, weekend_meal
                    )
-                   VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)
+                   VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                    ''', (
                        name, address1, address2, phone, start_date, duration, end_date,
-                       default_size, default_type_special
+                       default_size, default_type_special, weekend_meal
                    ))
     
     customer_id = cursor.lastrowid # stores the id of the last inserted row
     
-    working_days = generate_working_day(start_date, end_date)
+    working_days = generate_meal_days(start_date, end_date, weekend_meal_enabled=weekend_meal)
 
-    # assign default values to every day from start to end date
-    for day in working_days:
+
+    for meal_info in working_days:
+        meal_date = meal_info["date"]
+        meal_type = meal_info["type"]
+
+        if meal_type == "weekend":
+            type_special = default_type_special + " (weekend)"
+        else:
+            type_special = default_type_special
+
         cursor.execute('''
                        INSERT INTO meals (customer_id, date, size, type_special)
-                       VALUES (?, ?, ?, ?)
-                       ''', (
-                        customer_id,
-                        day,
-                        default_size,
-                        default_type_special
-                       ))
+                       VALUES) (?, ?, ?, ?)
+                       ''', (customer_id, meal_date, default_size, type_special)
+
 
     conn.commit()
     conn.close()
