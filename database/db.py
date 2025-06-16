@@ -50,7 +50,7 @@ def add_customer(data):
 
         cursor.execute('''
                        INSERT INTO meals (customer_id, date, size, type_special)
-                       VALUES) (?, ?, ?, ?)
+                       VALUES (?, ?, ?, ?)
                        ''', (customer_id, meal_date, default_size, type_special))
 
 
@@ -316,4 +316,5 @@ def DELETE_ALL():
     conn.close()
 
 # DELETE_ALL()
+
 TEST_PRINT()

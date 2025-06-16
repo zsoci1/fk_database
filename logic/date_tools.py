@@ -81,4 +81,3 @@ def get_current_week_range():
     return (start_str, end_srt)
 
 
-print(generate_meal_days("2025-06-15", "2025-06-29", 1))
