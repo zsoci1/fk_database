@@ -17,6 +17,6 @@ CREATE TABLE IF NOT EXISTS meals (
 	customer_id INTEGER NOT NULL,
 	date DATE NOT NULL,
 	size TEXT CHECK(size IN ('S', 'M', 'L', 'XL')),
-	type_special TEXT, --vesszovel elvalasztva pl: ebed VEGA, snack, vacsora
+	type_special TEXT, --vesszovel elvalasztva pl: ebed:vega , snack, vacsora
 	FOREIGN KEY (customer_id) REFERENCES customers(id)
 );

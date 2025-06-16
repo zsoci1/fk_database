@@ -104,7 +104,7 @@ def get_customer_defaults(customer_id):
     cursor = conn.cursor()
 
     cursor.execute('''
-                   SELECT name, address1, address2, phone,
+                   SELECT name, address1, address2, phone, weekend_meal,
                             default_size, default_type_special
                    FROM customers
                    WHERE id = ?
@@ -119,8 +119,9 @@ def get_customer_defaults(customer_id):
             "address1": result[1],
             "address2": result[2],
             "phone": result[3],
-            "default_size": result[4],
-            "default_type_special": result[5]
+            "weekend_meal": result[4],
+            "default_size": result[5],
+            "default_type_special": result[6]
         }
     else:
         return None
@@ -318,3 +319,4 @@ def DELETE_ALL():
 # DELETE_ALL()
 
 TEST_PRINT()
+print(get_customer_defaults(1))
