@@ -52,7 +52,7 @@ def add_customer(data):
 
         cursor.execute('''
                        INSERT INTO meals (customer_id, date, size, type_special, price_day)
-                       VALUES (?, ?, ?, ?)
+                       VALUES (?, ?, ?, ?, ?)
                        ''', (customer_id, meal_date, default_size, type_special, price_day))
 
 
