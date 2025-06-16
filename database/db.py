@@ -189,13 +189,13 @@ def update_customer_defaults(customer_id, data):
 
 # EDIT PANEL -> EDIT SUBSCRIPTION & STATE OF SUBSCRIPTION
 # megkapja: customer_id 
-# visszaad egy dictionary-t ami tartalmazza: nev, tel, start_date, duration, end_date es REMAINING DAYS
+# visszaad egy dictionary-t ami tartalmazza:  start_date, duration, end_date, remaining days, total sum
 def get_subscription_info(customer_id):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
     cursor.execute('''
-                   SELECT name, phone, start_date, duration, end_date
+                   SELECT start_date, duration, end_date, price_day
                    FROM customers
                    WHERE id = ?
                    ''', (customer_id,))
@@ -206,7 +206,7 @@ def get_subscription_info(customer_id):
     if not row:
         return None
     
-    name, phone, start_date, duration, end_date = row # tuple unpacking
+    start_date, duration, end_date, price_day = row # tuple unpacking
 
     today = datetime.today().date()
     if end_date:
@@ -215,13 +215,14 @@ def get_subscription_info(customer_id):
     else:
         remaining = 0
 
+    total_income = duration * price_day
+
     return {
-        "name": name,
-        "phone": phone,
         "start_date": start_date,
         "duration": duration,
         "end_date": end_date,
-        "remaining_days": remaining
+        "remaining_days": remaining,
+        "total_income": total_income
     }
 
 
@@ -325,4 +326,3 @@ def DELETE_ALL():
 # DELETE_ALL()
 
 TEST_PRINT()
-print(get_customer_defaults(1))
