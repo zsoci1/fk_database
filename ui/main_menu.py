@@ -74,7 +74,8 @@ class MainMenu(ctk.CTk):
     def show_page(self, page_name):
         # Load user_input data before showing ChangeDef
         if page_name == ChangeDef:
-            self.pages[ChangeDef].user_input()
+            self.pages[ChangeDef].load_input()
+
         # Hiding the current_frame if it exists
         if self.current_frame:
             self.current_frame.grid_remove()

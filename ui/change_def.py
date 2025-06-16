@@ -13,30 +13,16 @@ class ChangeDef(ctk.CTkFrame):
             "address1":"",
             "address2":"",
             "phone":"",
-            "start_date":"",
-            "duration":"",
             "weekend_meal":"",
             "default_size":"",
-            "default_type_special":""
+            "default_type_special":"",
+            "price_day":""
         }
         self.checkbox_vars=[]
         self.special_entries =[]
         self.meal_data = ["reggeli", "ebed", "snack", "vacsora"]
         self.setup_frame()
 
-    # Label and Back button
-    def setup_frame(self):
-        self.grid_columnconfigure(0, weight=0)
-        self.grid_rowconfigure(0, weigh=0)
-
-        self.label = ctk.CTkLabel(self, text="Megrendelő", font=("Arial", 30, "bold"))
-        self.label.grid(row = 0, column = 0, padx =20, pady =30, sticky="nw")
-
-        from ui.edit_meals import ModPage
-        self.back_btn = ctk.CTkButton(self,text="Vissza",command=lambda:self.mainmenu.show_page(ModPage))
-        self.back_btn.grid(row=12, column=0, padx=20, sticky="w")
-
-    def user_input(self):
         # Nev input
         self.name_label = ctk.CTkLabel(self, text="Név", font=("Arial", 18))
         self.name_label.grid(row =1, column =0, padx =20, pady=10, sticky="w")
@@ -61,32 +47,18 @@ class ChangeDef(ctk.CTkFrame):
         self.second_address_entry = ctk.CTkEntry(self, placeholder_text="Hétvége")
         self.second_address_entry.grid(row =4, column =1, padx=20, sticky="w")
 
-        # Elofizetes kezdete input
-        self.calendar_label = ctk.CTkLabel(self, text="Előfizetés kezdete", font=("Arial", 18))
-        self.calendar_label.grid(row =5, column =0, padx =20, pady=10, sticky="w")
-        self.date_picker = DateEntry(self, date_pattern='yyyy-mm-dd', width = 13, font=("Arial",14))
-        self.date_picker.grid(row =6, column=0, padx=25, pady=10, sticky="w")
-
-        # Idotartam input
-        self.duration_label = ctk.CTkLabel(self, text="Előfizetés időtartama", font=("Arial", 18))
-        self.duration_label.grid(row =5, column =1, padx =20, pady=10, sticky="w")
-        self.duration_entry = ctk.CTkEntry(self, placeholder_text="Napok száma")
-        self.duration_entry.grid(row =6, column = 1, padx=20, sticky="w")
-
         # Hetvege input
         self.weekend_checkbox_label = ctk.CTkLabel(self, text="Hétvégi étkezés", font=("Arial", 18))
-        self.weekend_checkbox_label.grid(row =5, column =2, padx =20, pady=10, sticky="w")
+        self.weekend_checkbox_label.grid(row =5, column =0, padx =20, pady=10, sticky="w")
         self.weekend_var = tk.BooleanVar()
         self.weekend_checkbox = ctk.CTkCheckBox(self, text="", variable=self.weekend_var)
-        self.weekend_checkbox.grid(row =6, column = 2, padx=20, sticky="w")
-        
+        self.weekend_checkbox.grid(row =6, column = 0, padx=20, sticky="w")
         
         # Meret input
         self.size_label = ctk.CTkLabel(self, text="Méret", font=("Arial", 18))
         self.size_label.grid(row =7, column =0, padx =20, pady=10, sticky="w")
         self.size_combobox = ctk.CTkComboBox(self, values=["S", "M", "L", "XL"], state="readonly")
         self.size_combobox.grid(row=8, column=0, padx=20, pady=(0,10), sticky="w")
-        self.size_combobox.set("")
 
         # Price/day input
         self.price_label = ctk.CTkLabel(self, text="Ár/nap", font=("Arial", 18))
@@ -109,11 +81,112 @@ class ChangeDef(ctk.CTkFrame):
             entry.grid(row=idx, column=1, padx=(110,0), pady=(0,10), sticky="e")
             self.special_entries.append(entry)
             idx +=1
-        self.load_input()
+
+    # Label and Back button
+    def setup_frame(self):
+        self.grid_columnconfigure(0, weight=0)
+        self.grid_rowconfigure(0, weigh=0)
+
+        self.label = ctk.CTkLabel(self, text="Nev", font=("Arial", 30, "bold"))
+        self.label.grid(row = 0, column = 0, padx =20, pady =30, sticky="nw")
+
+        from ui.edit_meals import ModPage
+        self.back_btn = ctk.CTkButton(self,text="Vissza",command=lambda:self.mainmenu.show_page(ModPage))
+        self.back_btn.grid(row=12, column=1, padx=20, sticky="w")
 
     def load_input(self):
-        self.chosen_name = self.mod_page.chosen_name
+        
         self.chosen_id = self.mod_page.chosen_id
-        print(self.chosen_id, self.chosen_name)
+        user_data = get_customer_defaults(self.chosen_id)
+
+        self.name_entry.delete(0, "end")
+        self.name_entry.insert(0, user_data["name"])
+
+        self.phone_entry.delete(0, "end")
+        self.phone_entry.insert(0, user_data["phone"])
+
+        self.first_address_entry.delete(0,"end")
+        self.first_address_entry.insert(0, user_data["address1"])
+
+        self.second_address_entry.delete(0,"end")
+        self.second_address_entry.insert(0, user_data["address2"])
+
+        self.second_address_entry.delete(0,"end")
+        self.second_address_entry.insert(0, user_data["address2"])
+
+        self.weekend_var.set(False)
+        if user_data["weekend_meal"]:
+            self.weekend_var.set(True)
+
+        self.size_combobox.set(user_data["default_size"])
+
+        self.price_entry.delete(0, "end")
+        self.price_entry.insert(0, user_data["price_day"])
+
+        parsed = self.parse_default_type_special(user_data['default_type_special'])
+
+        for i, meal in enumerate(self.meals):  # self.meals = ["Reggeli", "Ebéd", "Snack", "Vacsora"]
+            if parsed[meal] is not None:
+                self.checkbox_vars[i].set(True)
+            else:
+                self.checkbox_vars[i].set(False)
+
+            self.special_entries[i].delete(0, 'end')
+            if parsed[meal] not in [None, ""]:
+                self.special_entries[i].insert(0, parsed[meal])
+
+        self.save_btn = ctk.CTkButton(self, text="Mentés", command=self.error_handling)
+        self.save_btn.grid(row=12,column=0)
+
+
+    def parse_default_type_special(self,data):
+        db_to_display = {
+            "reggeli": "Reggeli",
+            "ebed": "Ebéd",
+            "snack": "Snack",
+            "vacsora": "Vacsora"
+        }
+        # Initialize result with all meals set to None (not selected)
+        result = {meal: None for meal in db_to_display.values()}
+
+        if not data:
+            return result
+
+        items = [item.strip() for item in data.split(",")]
+        for item in items:
+            if ':' in item:
+                meal, special = item.split(":")
+                meal_key = meal.strip().lower()
+                if meal_key in db_to_display:
+                    result[db_to_display[meal_key]] = special.strip()
+            else:
+                meal_key = item.strip().lower()
+                if meal_key in db_to_display:
+                    result[db_to_display[meal_key]] = ""
+        return result
+    
+    def error_handling(self):
+        pass
+
+    def update_input(self):
+        pass
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+        
+
 
 
