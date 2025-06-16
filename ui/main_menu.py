@@ -13,12 +13,14 @@ class MainMenu(ctk.CTk):
         self.setup_window()
         self.create_widgets()
         # Load all pages into a dictionary
-        self.pages = {
-            HomePage: HomePage(self.content_frame, self),
-            AddPage: AddPage(self.content_frame, self),
-            ModPage: ModPage(self.content_frame, self),
-            ChangeDef: ChangeDef(self.content_frame, self)
-        }
+        self.pages = {}
+        self.pages[HomePage] = HomePage(self.content_frame, self)
+        self.pages[AddPage] = AddPage(self.content_frame, self)
+        # Create ModPage first
+        mod_page = ModPage(self.content_frame, self)
+        self.pages[ModPage] = mod_page
+        # Now we can safely pass mod_page to ChangeDef
+        self.pages[ChangeDef] = ChangeDef(self.content_frame, self, mod_page)
         for page in self.pages.values():    
             page.grid(row=0, column=0, sticky="nsew")
             page.grid_remove()
@@ -70,6 +72,9 @@ class MainMenu(ctk.CTk):
         self.exit_btn.grid(row = 5, column = 0, padx = 20, pady = 30)
 
     def show_page(self, page_name):
+        # Load user_input data before showing ChangeDef
+        if page_name == ChangeDef:
+            self.pages[ChangeDef].user_input()
         # Hiding the current_frame if it exists
         if self.current_frame:
             self.current_frame.grid_remove()
