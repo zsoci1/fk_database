@@ -18,6 +18,7 @@ class AddPage(ctk.CTkFrame):
             "phone":"",
             "start_date":"",
             "duration":"",
+            "weekend_meal":"",
             "default_size":"",
             "default_type_special":""
         }
@@ -87,10 +88,10 @@ class AddPage(ctk.CTkFrame):
         self.size_combobox.set("")
 
         # Price/day input
-        self.price_label = ctk.CTkLabel(self, text="Ár/nap", font=("Arial", 18))
-        self.price_label.grid(row=9, column=0, padx=20, sticky="w")
-        self.price_entry = ctk.CTkEntry(self)
-        self.price_entry.grid(row =10, column =0, padx=20, sticky="w")
+        #self.price_label = ctk.CTkLabel(self, text="Ár/nap", font=("Arial", 18))
+        #self.price_label.grid(row=9, column=0, padx=20, sticky="w")
+        #self.price_entry = ctk.CTkEntry(self)
+        #self.price_entry.grid(row =10, column =0, padx=20, sticky="w")
         
         # Tipus inputok
         self.type_label = ctk.CTkLabel(self, text="Típus", font=("Arial", 18))
@@ -126,10 +127,10 @@ class AddPage(ctk.CTkFrame):
             self.delete_input(self.duration_entry)
         elif self.size_combobox.get().strip() == "":
             CustomMessageBox(title='Hiba', text='A Méret mező nem lehet üres.')
-        elif self.price_entry.get().strip() =="":
-             CustomMessageBox(title='Hiba', text='Az Ár/nap mező nem lehet üres.')
-        elif self.price_entry.get().strip().isdigit() == False:
-            CustomMessageBox(title='Hiba', text='Az Ár/napnak egy számnak kell lennie.')
+        #elif self.price_entry.get().strip() =="":
+             #CustomMessageBox(title='Hiba', text='Az Ár/nap mező nem lehet üres.')
+        #elif self.price_entry.get().strip().isdigit() == False:
+            #CustomMessageBox(title='Hiba', text='Az Ár/napnak egy számnak kell lennie.')
         else:
             for var in (self.checkbox_vars):
                 checkbox_value = var.get()
@@ -156,12 +157,12 @@ class AddPage(ctk.CTkFrame):
             self.date_picker.set_date(datetime.date.today())
             self.data["duration"] = self.duration_entry.get()
             self.delete_input(self.duration_entry)
-            self.data["weekend"] = self.weekend_checkbox.get()
+            self.data["weekend_meal"] = self.weekend_checkbox.get()
             self.weekend_checkbox.set(False)
             self.data["default_size"] = self.size_combobox.get()
             self.size_combobox.set("")
-            self.data["priceday"] = self.price_entry.get()
-            self.delete_input(self.price_entry)
+            #self.data["priceday"] = self.price_entry.get()
+            #self.delete_input(self.price_entry)
 
             special_data = []
             for meal, var, entry in zip(self.meal_data, self.checkbox_vars, self.special_entries):
