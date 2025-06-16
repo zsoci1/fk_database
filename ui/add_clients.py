@@ -159,7 +159,7 @@ class AddPage(ctk.CTkFrame):
             self.data["duration"] = self.duration_entry.get()
             self.delete_input(self.duration_entry)
             self.data["weekend_meal"] = self.weekend_checkbox.get()
-            self.weekend_checkbox.set(False)
+            self.weekend_var.set(False)
             self.data["default_size"] = self.size_combobox.get()
             self.size_combobox.set("")
             #self.data["priceday"] = self.price_entry.get()
