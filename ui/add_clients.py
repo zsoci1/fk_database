@@ -76,7 +76,8 @@ class AddPage(ctk.CTkFrame):
         # Hetvege input
         self.weekend_checkbox_label = ctk.CTkLabel(self, text="Hétvégi étkezés", font=("Arial", 18))
         self.weekend_checkbox_label.grid(row =5, column =2, padx =20, pady=10, sticky="w")
-        self.weekend_checkbox = ctk.CTkCheckBox(self, text="")
+        self.weekend_var = tk.BooleanVar()
+        self.weekend_checkbox = ctk.CTkCheckBox(self, text="", variable=self.weekend_var)
         self.weekend_checkbox.grid(row =6, column = 2, padx=20, sticky="w")
         
         
