@@ -2,6 +2,7 @@ import customtkinter as ctk
 from ui.home import HomePage
 from ui.add_clients import AddPage
 from ui.edit_meals import ModPage
+from ui.change_def import ChangeDef
 
 # Main menu class
 class MainMenu(ctk.CTk):
@@ -13,9 +14,10 @@ class MainMenu(ctk.CTk):
         self.create_widgets()
         # Load all pages into a dictionary
         self.pages = {
-            HomePage:HomePage(self.content_frame),
-            AddPage:AddPage(self.content_frame),
-            ModPage:ModPage(self.content_frame)
+            HomePage: HomePage(self.content_frame, self),
+            AddPage: AddPage(self.content_frame, self),
+            ModPage: ModPage(self.content_frame, self),
+            ChangeDef: ChangeDef(self.content_frame, self)
         }
         for page in self.pages.values():    
             page.grid(row=0, column=0, sticky="nsew")
@@ -52,17 +54,20 @@ class MainMenu(ctk.CTk):
 
     # Creating buttons in sidebar_frame
     def create_buttons(self):   
-        self.home_btn = ctk.CTkButton(self.sidebar_frame, text = "Ügyfelek", font=("Arial", 26, "bold" ), command=lambda:self.show_page(HomePage))
-        self.home_btn.grid(row = 1, column = 0, padx = 20, pady = 30)
+        self.statement_btn = ctk.CTkButton(self.sidebar_frame, text = "Kimutatás", font=("Arial", 26, "bold" ), command=lambda:self.show_page(HomePage))
+        self.statement_btn.grid(row = 1, column = 0, padx = 20, pady = 30)
+
+        self.customers_btn = ctk.CTkButton(self.sidebar_frame, text = "Ügyfelek", font=("Arial", 26, "bold" ))
+        self.customers_btn.grid(row = 2, column = 0, padx = 20, pady = 30)
 
         self.add_clients_btn = ctk.CTkButton(self.sidebar_frame, text = "Hozzáadás", font=("Arial", 26, "bold" ), command=lambda:self.show_page(AddPage))
-        self.add_clients_btn.grid(row = 2, column = 0, padx = 20, pady = 30)
+        self.add_clients_btn.grid(row = 3, column = 0, padx = 20, pady = 30)
 
         self.edit_meals_btn = ctk.CTkButton(self.sidebar_frame, text = "Módosítás", font=("Arial", 26, "bold" ), command=lambda:self.show_page(ModPage))
-        self.edit_meals_btn.grid(row = 3, column = 0, padx = 20, pady = 30)
+        self.edit_meals_btn.grid(row = 4, column = 0, padx = 20, pady = 30)
 
         self.exit_btn = ctk.CTkButton(self.sidebar_frame, text = "Kilépés", font=("Arial", 26, "bold" ), command=self.master.destroy)
-        self.exit_btn.grid(row = 4, column = 0, padx = 20, pady = 30)
+        self.exit_btn.grid(row = 5, column = 0, padx = 20, pady = 30)
 
     def show_page(self, page_name):
         # Hiding the current_frame if it exists

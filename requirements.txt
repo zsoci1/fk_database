@@ -2,4 +2,3 @@ customtkinter
 pandas
 openpyxl
 tkcalendar
-CustomTkinterMessagebox

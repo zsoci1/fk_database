@@ -3,19 +3,18 @@ from database.db import search_customers
 from logic.date_tools import get_current_week_range
 from database.db import get_meals_for_week
 from database.db import update_meal_type
-from ui.editable_treeview import EditableTreeView
-from CustomTkinterMessagebox import CTkMessagebox
+from ui.tools.editable_treeview import EditableTreeView
+from ui.tools.messsagebox import CustomMessageBox
+from ui.change_def import ChangeDef
 
 class ModPage(ctk.CTkFrame):
-    def __init__(self, parent):
+    def __init__(self, parent, mainmenu):
         super().__init__(parent)
-        self.setup_window()
+        self.mainmenu = mainmenu
+        self.setup_frame()
         self.search_bar()
-        self.change_default()
-        self.change_subscription()
-        self.status_subscription()
 
-    def setup_window(self):
+    def setup_frame(self):
         self.grid_columnconfigure(0, weight=0)
         self.grid_rowconfigure(0, weigh=0)
         self.label = ctk.CTkLabel(self, text="Módosítás", font=("Arial", 30, "bold"))
@@ -59,27 +58,21 @@ class ModPage(ctk.CTkFrame):
             if self.suggestion_frame:
                 self.suggestion_frame.destroy()
                 self.suggestion_frame = None
-
-
-        # Format matches and phone numbers
-        ids = [id for (id, _, _) in matches]
-        names = [name for (_, name, _) in matches]
-        phones = [phone for (_, _, phone) in matches]
-    
+        
         # Show maximum 5 names
-        for i,name in enumerate(names[:5]): 
+        for i,(id_, name, phone)in enumerate(matches[:5]): 
             btn = ctk.CTkButton(self.suggestion_frame, text=name, 
-                                           command=lambda n=name: self.select_customer(n, phones,ids),
+                                           command=lambda n=name, p=phone, id_val=id_: self.select_customer(n, p, id_val),
                                            fg_color="lightgray", text_color="black", corner_radius=8)
             btn.grid(row=i, column= 0,padx=10, pady=2)
 
     # When a customer is chosen from suggestions
-    def select_customer(self, name, phones, ids):
+    def select_customer(self, name, phone, id):
         self.search_entry.delete(0, 'end')
         self.search_entry.insert(0, name)
         self.chosen_name = name
-        self.chosen_number = phones
-        self.chosen_id = ids
+        self.chosen_number = phone
+        self.chosen_id = id
         self.delete_suggestions()
 
     # Delete all suggestions
@@ -94,8 +87,6 @@ class ModPage(ctk.CTkFrame):
     def show_customer_info(self):
         if (hasattr(self, 'customer_name_label') and self.customer_name_label.winfo_exists() 
             and hasattr(self, 'customer_phone_label') and self.customer_phone_label.winfo_exists()):
-            self.name_label.destroy()
-            self.phone_label.destroy()
             self.customer_name_label.destroy()
             self.customer_phone_label.destroy()
 
@@ -109,12 +100,13 @@ class ModPage(ctk.CTkFrame):
         self.customer_phone_label = ctk.CTkLabel(self, text=self.chosen_number, font=("Arial", 18))
         self.customer_phone_label.grid(row=3, column=0, padx=(105,0), sticky="w")
 
+        self.change_default()
         self.load_data()
 
     # Load data for treeview
     def load_data(self):
         date = get_current_week_range()
-        id = self.chosen_id[0]
+        id = self.chosen_id
         meal_for_week = get_meals_for_week(id,date[0], date[1])
 
         # If treeview exists, destroy it
@@ -128,27 +120,22 @@ class ModPage(ctk.CTkFrame):
         self.week_label = ctk.CTkLabel(self, text=f"Aktuális hét: {formatted_date}", font=("Arial", 18))
         self.week_label.grid(row=9, column=0, padx=20, sticky="w")
 
+        # Whisper button for correct input
+        self.whisper_btn = ctk.CTkButton(self, text="Súgó", command=lambda:CustomMessageBox(
+        title='Súgó',
+        text='Típus mező használata:\n❌ reggeli vega tejmentes, ebéd vega...\n✔️ reggeli:vega tejmentes, ebed:vega...',    
+        ))
+
+        self.whisper_btn.grid(row=9, column=1, padx=20, sticky="w")
+
         # Then create treeview 
-        self.editable_treeview = EditableTreeView(self, meal_for_week, self.chosen_id[0], update_meal_type) 
+        self.editable_treeview = EditableTreeView(self, meal_for_week, self.chosen_id, update_meal_type) 
         self.editable_treeview.grid(row=10, column=0, padx=20, pady=10, sticky="nsew")
 
     def change_default(self):
         # Error handling -> cannot use this button if no person is selected in search bar
-        # CTkMessagebox.messagebox(title='', text='', sound='on', button_text='OK')
-        self.change_def_btn = ctk.CTkButton(self, text="Alapértelmezett szerkesztése", font=("Arial", 18))
+        self.change_def_btn = ctk.CTkButton(self, text="Megrendelő adatainak szerkesztése", font=("Arial", 18), command=lambda: self.mainmenu.show_page(ChangeDef))
         self.change_def_btn.grid(row =6, column =0, padx=20, pady=20, sticky="w")
-
-    def status_subscription(self):
-        # Error handling -> cannot use this button if no person is selected in search bar
-        # CTkMessagebox.messagebox(title='', text='', sound='on', button_text='OK')
-        self.change_sub_btn = ctk.CTkButton(self, text="Előfizetés állapota", font=("Arial", 18))
-        self.change_sub_btn.grid(row =7, column =0, padx=20, pady=20, sticky="w")
-
-    def change_subscription(self):
-        # Error handling -> cannot use this button if no person is selected in search bar
-        # CTkMessagebox.messagebox(title='', text='', sound='on', button_text='OK')
-        self.change_dur_btn = ctk.CTkButton(self, text="Előfizetés szerkesztése", font=("Arial", 18))
-        self.change_dur_btn.grid(row =8, column =0, padx=20, pady=20, sticky="w")
     
     def delete_input(self,input):
         input.delete(0, 'end')

@@ -1,13 +1,15 @@
 import customtkinter as ctk
 import tkinter as tk
 from tkcalendar import DateEntry
-from CustomTkinterMessagebox import CTkMessagebox
 import re 
+import datetime
 from database.db import add_customer
+from ui.tools.messsagebox import CustomMessageBox
 
 class AddPage(ctk.CTkFrame):
-    def __init__(self, parent):
+    def __init__(self, parent, mainmenu):
         super().__init__(parent)
+        self.mainmenu = mainmenu
         self.setup_frame()
         self.data = {
             "name":"",
@@ -49,13 +51,13 @@ class AddPage(ctk.CTkFrame):
         # Cim 1 input
         self.first_address_label = ctk.CTkLabel(self, text="Cím 1", font=("Arial", 18))
         self.first_address_label.grid(row =3, column =0, padx =20, pady=10, sticky="w")
-        self.first_address_entry = ctk.CTkEntry(self)
+        self.first_address_entry = ctk.CTkEntry(self, placeholder_text="Hétköznap")
         self.first_address_entry.grid(row =4, column =0, padx=20, sticky="w")
 
         # Cim 2 input
         self.second_address_label = ctk.CTkLabel(self, text="Cím 2", font=("Arial", 18))
         self.second_address_label.grid(row =3, column =1, padx =20, pady=10, sticky="w")
-        self.second_address_entry = ctk.CTkEntry(self)
+        self.second_address_entry = ctk.CTkEntry(self, placeholder_text="Hétvége")
         self.second_address_entry.grid(row =4, column =1, padx=20, sticky="w")
 
         # Elofizetes kezdete input
@@ -67,31 +69,45 @@ class AddPage(ctk.CTkFrame):
         # Idotartam input
         self.duration_label = ctk.CTkLabel(self, text="Előfizetés időtartama", font=("Arial", 18))
         self.duration_label.grid(row =5, column =1, padx =20, pady=10, sticky="w")
-        self.duration_entry = ctk.CTkEntry(self, placeholder_text="napok száma")
+        self.duration_entry = ctk.CTkEntry(self, placeholder_text="Napok száma")
         self.duration_entry.grid(row =6, column = 1, padx=20, sticky="w")
+
+        # Hetvege input
+        self.weekend_checkbox_label = ctk.CTkLabel(self, text="Hétvégi étkezés", font=("Arial", 18))
+        self.weekend_checkbox_label.grid(row =5, column =2, padx =20, pady=10, sticky="w")
+        self.weekend_checkbox = ctk.CTkCheckBox(self, text="")
+        self.weekend_checkbox.grid(row =6, column = 2, padx=20, sticky="w")
+        
         
         # Meret input
         self.size_label = ctk.CTkLabel(self, text="Méret", font=("Arial", 18))
         self.size_label.grid(row =7, column =0, padx =20, pady=10, sticky="w")
         self.size_combobox = ctk.CTkComboBox(self, values=["S", "M", "L", "XL"], state="readonly")
-        self.size_combobox.grid(row=8, column=0, padx=20, sticky="w")
+        self.size_combobox.grid(row=8, column=0, padx=20, pady=(0,10), sticky="w")
         self.size_combobox.set("")
+
+        # Price/day input
+        self.price_label = ctk.CTkLabel(self, text="Ár/nap", font=("Arial", 18))
+        self.price_label.grid(row=9, column=0, padx=20, sticky="w")
+        self.price_entry = ctk.CTkEntry(self)
+        self.price_entry.grid(row =10, column =0, padx=20, sticky="w")
         
         # Tipus inputok
         self.type_label = ctk.CTkLabel(self, text="Típus", font=("Arial", 18))
-        self.type_label.grid(row=7, column=1, padx=20, pady=10, sticky="w")
+        self.type_label.grid(row=7, column=1, padx=20, sticky="w")
         idx = 8
         self.meals = ["Reggeli", "Ebéd", "Snack", "Vacsora"]
         for i,meal in enumerate(self.meals):
             var = tk.BooleanVar()
             self.checkbox = ctk.CTkCheckBox(self, text=meal, variable=var)
-            self.checkbox.grid(row=idx, column=1, padx=(20, 0),sticky="w")
+            self.checkbox.grid(row=idx, column=1, padx=(20,0), pady=(0,10),sticky="w")
             self.checkbox_vars.append(var)
 
             entry = ctk.CTkEntry(self)
-            entry.grid(row=idx, column=1, padx=(110,0), sticky="e")
+            entry.grid(row=idx, column=1, padx=(110,0), pady=(0,10), sticky="e")
             self.special_entries.append(entry)
             idx +=1
+        
 
         # Mentes gomb
         self.save_label = ctk.CTkButton(self,text="Mentés", width=200, command=self.error_handling)
@@ -100,23 +116,27 @@ class AddPage(ctk.CTkFrame):
     # Input hiba kezeles popup windowokkal
     def error_handling(self):
         if self.name_entry.get().strip() == "":
-            CTkMessagebox.messagebox(title='Hiba', text='A Név mező nem lehet üres.', sound='on', button_text='OK')
+            CustomMessageBox(title='Hiba', text='A Név mező nem lehet üres.')
         elif self.date_picker.get().strip() == "":
-            CTkMessagebox.messagebox(title='Hiba', text='Az Előfizetés kezdete mező nem lehet üres.', sound='on', button_text='OK')
+            CustomMessageBox(title='Hiba', text='A Előfizetés mező nem lehet üres.')
         elif self.duration_entry.get().strip() == "":
-            CTkMessagebox.messagebox(title='Hiba', text='Az Előfizetés időtartama mező nem lehet üres.', sound='on', button_text='OK')
+            CustomMessageBox(title='Hiba', text='A Előfizetés időtartama mező nem lehet üres.')
         elif self.duration_entry.get().strip().isdigit() == False:
-            CTkMessagebox.messagebox(title='Hiba', text='Az Előfizetés időtartamának egy számnak kell lennie.', sound='on', button_text='OK')
+            CustomMessageBox(title='Hiba', text='Az Előfizetés időtartamának egy számnak kell lennie.')
             self.delete_input(self.duration_entry)
         elif self.size_combobox.get().strip() == "":
-            CTkMessagebox.messagebox(title='Hiba', text='A Méret mező nem lehet üres.', sound='on', button_text='OK')
+            CustomMessageBox(title='Hiba', text='A Méret mező nem lehet üres.')
+        elif self.price_entry.get().strip() =="":
+             CustomMessageBox(title='Hiba', text='Az Ár/nap mező nem lehet üres.')
+        elif self.price_entry.get().strip().isdigit() == False:
+            CustomMessageBox(title='Hiba', text='Az Ár/napnak egy számnak kell lennie.')
         else:
             for var in (self.checkbox_vars):
                 checkbox_value = var.get()
                 if checkbox_value == True:
                     self.is_correct = True
             if self.is_correct == False:
-                CTkMessagebox.messagebox(title='Hiba', text='A Típus mező nem lehet üres.', sound='on', button_text='OK')
+                CustomMessageBox(title='Hiba', text='A Típus mező nem lehet üres.')
             else:
                 # Ha minden elfogadhato, akkor meghvjuk a save_and_reset fuggvenyt
                 self.save_and_reset_input()
@@ -133,11 +153,15 @@ class AddPage(ctk.CTkFrame):
             self.data["address2"] = self.second_address_entry.get()
             self.delete_input(self.second_address_entry)
             self.data["start_date"] = self.date_picker.get()
-            self.delete_input(self.date_picker)
+            self.date_picker.set_date(datetime.date.today())
             self.data["duration"] = self.duration_entry.get()
             self.delete_input(self.duration_entry)
+            self.data["weekend"] = self.weekend_checkbox.get()
+            self.weekend_checkbox.set(False)
             self.data["default_size"] = self.size_combobox.get()
             self.size_combobox.set("")
+            self.data["priceday"] = self.price_entry.get()
+            self.delete_input(self.price_entry)
 
             special_data = []
             for meal, var, entry in zip(self.meal_data, self.checkbox_vars, self.special_entries):
