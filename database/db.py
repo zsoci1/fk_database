@@ -30,7 +30,7 @@ def add_customer(data):
                         name, address1, address2, phone, start_date, duration, end_date,
                         default_size, default_type_special, weekend_meal, price_day
                    )
-                   VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                   VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                    ''', (
                        name, address1, address2, phone, start_date, duration, end_date,
                        default_size, default_type_special, weekend_meal, price_day
