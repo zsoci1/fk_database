@@ -73,6 +73,8 @@ class ModPage(ctk.CTkFrame):
         self.chosen_name = name
         self.chosen_number = phone
         self.chosen_id = id
+        self.mainmenu.chosen_name = self.chosen_name
+        self.mainmenu.chosen_id = self.chosen_id
         self.delete_suggestions()
 
     # Delete all suggestions
