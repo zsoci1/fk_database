@@ -107,7 +107,7 @@ def get_customer_defaults(customer_id):
 
     cursor.execute('''
                    SELECT name, address1, address2, phone, weekend_meal,
-                            default_size, default_type_special
+                            default_size, default_type_special, price_day
                    FROM customers
                    WHERE id = ?
                    ''', (customer_id,))
@@ -123,7 +123,8 @@ def get_customer_defaults(customer_id):
             "phone": result[3],
             "weekend_meal": result[4],
             "default_size": result[5],
-            "default_type_special": result[6]
+            "default_type_special": result[6],
+            "price_day": result[7]
         }
     else:
         return None
