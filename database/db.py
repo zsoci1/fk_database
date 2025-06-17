@@ -326,6 +326,4 @@ def DELETE_ALL():
 # DELETE_ALL()
 
 TEST_PRINT()
-print(get_subscription_info(1))
-print(get_subscription_info(2))
-print(get_subscription_info(3))
+
