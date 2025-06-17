@@ -92,7 +92,7 @@ class AddPage(ctk.CTkFrame):
         # Price/day input
         self.price_label = ctk.CTkLabel(self, text="Ár/nap", font=("Arial", 18))
         self.price_label.grid(row=9, column=0, padx=20, sticky="w")
-        self.price_entry = ctk.CTkEntry(self)
+        self.price_entry = ctk.CTkEntry(self, placeholder_text="€")
         self.price_entry.grid(row =10, column =0, padx=20, sticky="w")
         
         # Tipus inputok
