@@ -277,8 +277,8 @@ def stop_subscription(customer_id):
 # EDIT PANEL -> ADATOK -> ELOFIZETES SZERKESZTESE -> AKTIVALAS
 # megkap egy customer_id, start_date, duration
 # aktivalja az elofizetest a megkapott parameterek alapjan
-def activate_subscription(customer_id, start_date, duration):
-    end_date = calc_end_date(start_date, duration)
+def activate_subscription(customer_id, start_date, duration, weekend_meal_enabled):
+    end_date = calc_end_date(start_date, duration, weekend_meal_enabled)
 
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
@@ -300,7 +300,7 @@ def activate_subscription(customer_id, start_date, duration):
     
     # fetch default values from customers table
     cursor.execute('''
-                   SELECT default_size, default_type_special
+                   SELECT default_size, default_type_special, price_day
                    FROM customers
                    WHERE id = ?
                    ''', (customer_id,))
@@ -308,14 +308,19 @@ def activate_subscription(customer_id, start_date, duration):
     default_row = cursor.fetchone()
 
     if default_row:
-        default_size, default_type_special = default_row
-        working_days = generate_meal_days(start_date, end_date)
+        default_size, default_type_special, price_day = default_row
+        working_days = generate_meal_days(start_date, end_date, weekend_meal_enabled)
 
         for day in working_days:
+
+            type_special = default_type_special
+            if day["type"] == "weekend":
+                type_special += " (weekend)"
+
             cursor.execute('''
-                           INSERT INTO meals (customer_id, date, size, type_special)
-                           VALUES (?, ?, ?, ?)
-                           ''', (customer_id, day, default_size, default_type_special))
+                           INSERT INTO meals (customer_id, date, size, type_special, price_day)
+                           VALUES (?, ?, ?, ?, ?)
+                           ''', (customer_id, day["date"], default_size, type_special, price_day))
             
     conn.commit()
     conn.close()
@@ -454,4 +459,6 @@ def DELETE_ALL():
 #DELETE_ALL()
 
 
+TEST_PRINT()
+activate_subscription(1, "2025-06-22", 5, 0)
 TEST_PRINT()
