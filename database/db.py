@@ -1,8 +1,23 @@
 import sqlite3
+import io
+from sqlite3 import Error
 from datetime import datetime, timedelta
 from logic.date_tools import calc_end_date, generate_meal_days, get_current_work_week
 
 DB_PATH = "database/meals.db"
+
+def SQLite_connection():
+
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        print("Connection is established successfully!")
+        print("'meals.db' is created ")
+        return conn
+    except Error:
+        print(Error)
+    finally:
+        conn.close()
+
 
 # ADD CUSTOMER PANEL 
 # megkap egy "data" dictionary-t a UI-bol es elmenti az adatbazisba
@@ -457,4 +472,6 @@ def DELETE_ALL():
     conn.close()
 
 #DELETE_ALL()
-TEST_PRINT()
+#TEST_PRINT()
+
+SQLite_connection()
