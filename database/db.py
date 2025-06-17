@@ -61,6 +61,21 @@ def add_customer(data):
 
     return customer_id
 
+def search_by_name(customer_id):
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute('''
+                   SELECT name
+                   FROM customers
+                   WHERE id = ?
+                   ''', (customer_id,))
+    result = cursor.fetchone()
+
+    conn.close()
+    return result
+
+
 # EDIT PANEL, HOME PANEL 
 # megkap egy stringet -> query pl "Nev"
 # visszaad egy listat minden kozeli talalatrol
@@ -255,6 +270,7 @@ def stop_subscription(customer_id):
     conn.commit()
     conn.close()
 
+
 # EDIT PANEL -> EDIT SUBSCRIPTION -> ACTIVATE SUBSCRIPTION 
 def activate_subscription(customer_id, start_date, duration):
     end_date = calc_end_date(start_date, duration)
@@ -298,6 +314,27 @@ def activate_subscription(customer_id, start_date, duration):
             
     conn.commit()
     conn.close()
+
+
+def extend_subscription(customer_id, extra_days):
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute('''
+                   SELECT end_date, duration, default_size, default_type_special, weekend_meal, price_day
+                   FROM customers
+                   WHERE id = ?
+                   ''', (customer_id,))
+    row = cursor.fetchone()
+
+    if not row:
+        conn.close()
+        return
+    
+    end_date, duration, size, type_special, weekend_meal, price_day = row
+
+
+
 
 # PRINTING DB (for testing)
 def TEST_PRINT():
