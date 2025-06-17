@@ -1,6 +1,6 @@
 import sqlite3
 from datetime import datetime, timedelta
-from logic.date_tools import calc_end_date, generate_meal_days, get_current_work_week, build_pause_range
+from logic.date_tools import calc_end_date, generate_meal_days, get_current_work_week
 
 DB_PATH = "database/meals.db"
 
@@ -309,7 +309,7 @@ def activate_subscription(customer_id, start_date, duration):
 
     if default_row:
         default_size, default_type_special = default_row
-        working_days = generate_working_day(start_date, end_date)
+        working_days = generate_meal_days(start_date, end_date)
 
         for day in working_days:
             cursor.execute('''
