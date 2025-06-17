@@ -121,9 +121,9 @@ class AddPage(ctk.CTkFrame):
         if self.name_entry.get().strip() == "":
             CustomMessageBox(title='Hiba', text='A Név mező nem lehet üres.')
         elif self.date_picker.get().strip() == "":
-            CustomMessageBox(title='Hiba', text='A Előfizetés mező nem lehet üres.')
+            CustomMessageBox(title='Hiba', text='Az Előfizetés mező nem lehet üres.')
         elif self.duration_entry.get().strip() == "":
-            CustomMessageBox(title='Hiba', text='A Előfizetés időtartama mező nem lehet üres.')
+            CustomMessageBox(title='Hiba', text='Az Előfizetés időtartama mező nem lehet üres.')
         elif self.duration_entry.get().strip().isdigit() == False:
             CustomMessageBox(title='Hiba', text='Az Előfizetés időtartamának egy számnak kell lennie.')
             self.delete_input(self.duration_entry)

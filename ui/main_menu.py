@@ -59,14 +59,14 @@ class MainMenu(ctk.CTk):
         self.statement_btn = ctk.CTkButton(self.sidebar_frame, text = "Kimutatás", font=("Arial", 26, "bold" ), command=lambda:self.show_page(HomePage))
         self.statement_btn.grid(row = 1, column = 0, padx = 20, pady = 30)
 
-        self.customers_btn = ctk.CTkButton(self.sidebar_frame, text = "Ügyfelek", font=("Arial", 26, "bold" ))
-        self.customers_btn.grid(row = 2, column = 0, padx = 20, pady = 30)
-
         self.add_clients_btn = ctk.CTkButton(self.sidebar_frame, text = "Hozzáadás", font=("Arial", 26, "bold" ), command=lambda:self.show_page(AddPage))
-        self.add_clients_btn.grid(row = 3, column = 0, padx = 20, pady = 30)
+        self.add_clients_btn.grid(row = 2, column = 0, padx = 20, pady = 30)
 
         self.edit_meals_btn = ctk.CTkButton(self.sidebar_frame, text = "Módosítás", font=("Arial", 26, "bold" ), command=lambda:self.show_page(ModPage))
-        self.edit_meals_btn.grid(row = 4, column = 0, padx = 20, pady = 30)
+        self.edit_meals_btn.grid(row = 3, column = 0, padx = 20, pady = 30)
+
+        self.export_btn = ctk.CTkButton(self.sidebar_frame, text = "Exportálás", font=("Arial", 26, "bold" ))
+        self.export_btn.grid(row = 4, column = 0, padx = 20, pady = 30)
 
         self.exit_btn = ctk.CTkButton(self.sidebar_frame, text = "Kilépés", font=("Arial", 26, "bold" ), command=self.master.destroy)
         self.exit_btn.grid(row = 5, column = 0, padx = 20, pady = 30)

@@ -2,6 +2,8 @@ import tkinter as tk
 import customtkinter as ctk
 from tkcalendar import DateEntry
 from database.db import get_customer_defaults
+from database.db import update_customer_defaults
+from ui.tools.messsagebox import CustomMessageBox
 
 class ChangeDef(ctk.CTkFrame):
     def __init__(self, parent, mainmenu, mod_page):
@@ -21,6 +23,7 @@ class ChangeDef(ctk.CTkFrame):
         self.checkbox_vars=[]
         self.special_entries =[]
         self.meal_data = ["reggeli", "ebed", "snack", "vacsora"]
+        self.is_correct = False
         self.setup_frame()
 
         # Nev input
@@ -87,7 +90,7 @@ class ChangeDef(ctk.CTkFrame):
         self.grid_columnconfigure(0, weight=0)
         self.grid_rowconfigure(0, weigh=0)
 
-        self.label = ctk.CTkLabel(self, text="Nev", font=("Arial", 30, "bold"))
+        self.label = ctk.CTkLabel(self, text="Adatok szerkesztése", font=("Arial", 30, "bold"))
         self.label.grid(row = 0, column = 0, padx =20, pady =30, sticky="nw")
 
         from ui.edit_meals import ModPage
@@ -97,35 +100,35 @@ class ChangeDef(ctk.CTkFrame):
     def load_input(self):
         
         self.chosen_id = self.mod_page.chosen_id
-        user_data = get_customer_defaults(self.chosen_id)
+        self.user_data = get_customer_defaults(self.chosen_id)
 
         self.name_entry.delete(0, "end")
-        self.name_entry.insert(0, user_data["name"])
+        self.name_entry.insert(0, self.user_data["name"])
 
         self.phone_entry.delete(0, "end")
-        self.phone_entry.insert(0, user_data["phone"])
+        self.phone_entry.insert(0, self.user_data["phone"])
 
         self.first_address_entry.delete(0,"end")
-        self.first_address_entry.insert(0, user_data["address1"])
+        self.first_address_entry.insert(0, self.user_data["address1"])
 
         self.second_address_entry.delete(0,"end")
-        self.second_address_entry.insert(0, user_data["address2"])
+        self.second_address_entry.insert(0, self.user_data["address2"])
 
         self.second_address_entry.delete(0,"end")
-        self.second_address_entry.insert(0, user_data["address2"])
+        self.second_address_entry.insert(0, self.user_data["address2"])
 
         self.weekend_var.set(False)
-        if user_data["weekend_meal"]:
+        if self.user_data["weekend_meal"]:
             self.weekend_var.set(True)
 
-        self.size_combobox.set(user_data["default_size"])
+        self.size_combobox.set(self.user_data["default_size"])
 
         self.price_entry.delete(0, "end")
-        self.price_entry.insert(0, user_data["price_day"])
+        self.price_entry.insert(0, self.user_data["price_day"])
 
-        parsed = self.parse_default_type_special(user_data['default_type_special'])
+        parsed = self.parse_default_type_special(self.user_data['default_type_special'])
 
-        for i, meal in enumerate(self.meals):  # self.meals = ["Reggeli", "Ebéd", "Snack", "Vacsora"]
+        for i, meal in enumerate(self.meals):  
             if parsed[meal] is not None:
                 self.checkbox_vars[i].set(True)
             else:
@@ -136,7 +139,7 @@ class ChangeDef(ctk.CTkFrame):
                 self.special_entries[i].insert(0, parsed[meal])
 
         self.save_btn = ctk.CTkButton(self, text="Mentés", command=self.error_handling)
-        self.save_btn.grid(row=12,column=0)
+        self.save_btn.grid(row=12,column=0, padx=20, sticky="w")
 
 
     def parse_default_type_special(self,data):
@@ -166,10 +169,28 @@ class ChangeDef(ctk.CTkFrame):
         return result
     
     def error_handling(self):
-        pass
+        if self.name_entry.get().strip() == "":
+            CustomMessageBox(title='Hiba', text='A Név mező nem lehet üres.')
+        elif self.size_combobox.get().strip() == "":
+            CustomMessageBox(title='Hiba', text='A Méret mező nem lehet üres.')
+        elif self.price_entry.get().strip() =="":
+             CustomMessageBox(title='Hiba', text='Az Ár/nap mező nem lehet üres.')
+        elif self.price_entry.get().strip().isdigit() == False:
+            CustomMessageBox(title='Hiba', text='Az Ár/napnak egy számnak kell lennie.')
+        else:
+            for var in (self.checkbox_vars):
+                checkbox_value = var.get()
+                if checkbox_value == True:
+                    self.is_correct = True
+            if self.is_correct == False:
+                CustomMessageBox(title='Hiba', text='A Típus mező nem lehet üres.')
+            else:
+                # Ha minden elfogadhato, akkor meghvjuk a save_and_reset fuggvenyt
+                self.save_data()
+                print("mentve")
 
-    def update_input(self):
-        pass
+    def save_data(self):
+        update_customer_defaults(self.chosen_id,self.user_data)
 
 
 
