@@ -1,5 +1,5 @@
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timedelta
 from logic.date_tools import calc_end_date, generate_meal_days, get_current_work_week
 
 DB_PATH = "database/meals.db"
@@ -63,7 +63,7 @@ def add_customer(data):
 
 
 # megkap egy customer_id-t
-# visszaadja a nevet 
+# visszaadja a nevet es a tel. szamot
 def search_by_name(customer_id):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
@@ -318,7 +318,10 @@ def activate_subscription(customer_id, start_date, duration):
     conn.commit()
     conn.close()
 
-
+# EDIT PANEL -> MEGRENDELO ADATAINAK SZERKESZTESE -> ELOFIZETES SZERKESZTESE
+# megkapja customer_id, extra_days
+# meghosszabbitja az elofizetest extra_days szamu nappal
+# megvaltozik a duration es az end_date az adatbazisban
 def extend_subscription(customer_id, extra_days):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
@@ -336,7 +339,8 @@ def extend_subscription(customer_id, extra_days):
     
     end_date, duration, size, type_special, weekend_meal, price_day = row
 
-    new_end_date = calc_end_date(end_date, extra_days, weekend_meal)
+    next_day = (datetime.strptime(end_date, "%Y-%m-%d") + timedelta(days=1)).strftime("%Y-%m-%d")
+    new_end_date = calc_end_date(next_day, extra_days, weekend_meal)
     new_duration = duration + extra_days
 
     cursor.execute('''
@@ -345,8 +349,8 @@ def extend_subscription(customer_id, extra_days):
                    WHERE id = ?
                    ''', (new_duration, new_end_date, customer_id))
     
-    new_meal_days = generate_meal_days(end_date, new_end_date, weekend_meal)
-    for meal in new_meal_days[1:]: # elsot skippelni (end_date mar letezik)
+    new_meal_days = generate_meal_days(next_day, new_end_date, weekend_meal)
+    for meal in new_meal_days: 
         cursor.execute('''
                        INSERT INTO meals (customer_id, date, size, type_special, price_day)
                        VALUES (?, ?, ?, ?, ?)
@@ -382,6 +386,5 @@ def DELETE_ALL():
 
 # DELETE_ALL()
 
-TEST_PRINT()
 
-print(search_by_name(1))
+TEST_PRINT()
