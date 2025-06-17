@@ -19,18 +19,19 @@ def SQLite_connection():
     finally:
         conn.close()
 
+# TODO CONNECT TO EXIT PROTOCOL
 # backup database
 def SQLite_BACKUP():
     conn = sqlite3.connect(DB_PATH)
 
-    with io.open('backupdatabase_dump.sql', 'w') as p:
+    filename = f"backups/backup_{datetime.today().strftime('%Y-%m-%d_%H-%M-%S')}.sql"
 
+    with io.open(filename, 'w') as p:
         for line in conn.iterdump():
-
             p.write('%s\n' % line)
     
     print(' Backup perfomed successfully! ')
-    print(' Data Saved as backupdatabase_dump.sql')
+    print(f' Data Saved as {filename}')
 
     conn.close()
 
@@ -489,4 +490,3 @@ def DELETE_ALL():
 #DELETE_ALL()
 TEST_PRINT()
 
-SQLite_connection()
