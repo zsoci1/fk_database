@@ -457,8 +457,4 @@ def DELETE_ALL():
     conn.close()
 
 #DELETE_ALL()
-
-
-TEST_PRINT()
-activate_subscription(1, "2025-06-22", 5, 0)
 TEST_PRINT()
