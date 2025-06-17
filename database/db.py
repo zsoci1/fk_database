@@ -1,6 +1,6 @@
 import sqlite3
 from datetime import datetime, timedelta
-from logic.date_tools import calc_end_date, generate_meal_days, get_current_work_week
+from logic.date_tools import calc_end_date, generate_meal_days, get_current_work_week, build_pause_range
 
 DB_PATH = "database/meals.db"
 
@@ -274,7 +274,9 @@ def stop_subscription(customer_id):
     conn.close()
 
 
-# EDIT PANEL -> EDIT SUBSCRIPTION -> ACTIVATE SUBSCRIPTION 
+# EDIT PANEL -> ADATOK -> ELOFIZETES SZERKESZTESE -> AKTIVALAS
+# megkap egy customer_id, start_date, duration
+# aktivalja az elofizetest a megkapott parameterek alapjan
 def activate_subscription(customer_id, start_date, duration):
     end_date = calc_end_date(start_date, duration)
 
@@ -318,7 +320,7 @@ def activate_subscription(customer_id, start_date, duration):
     conn.commit()
     conn.close()
 
-# EDIT PANEL -> MEGRENDELO ADATAINAK SZERKESZTESE -> ELOFIZETES SZERKESZTESE
+# EDIT PANEL -> ADATOK -> ELOFIZETES SZERKESZTESE -> MEGHOSSZABBITAS
 # megkapja customer_id, extra_days
 # meghosszabbitja az elofizetest extra_days szamu nappal
 # megvaltozik a duration es az end_date az adatbazisban
@@ -360,6 +362,71 @@ def extend_subscription(customer_id, extra_days):
     conn.close()
 
 
+# EDIT PANEL -> ADATOK -> ELOFIZETES SZERKESZTESE -> LEALLITAS X NAPRA
+# megkapja customer_id, pause_start string, pause_end string
+# leallitja az elofizetest erre az intervallumra es a leallitott napok szamaval meghosszabitja az elofizetest
+def pause_subscription(customer_id, pause_start, pause_end):
+
+
+    pause_dates = []
+    current = datetime.strptime(pause_start, "%Y-%m-%d")
+    end = datetime.strptime(pause_end, "%Y-%m-%d")
+
+    while current <= end:
+        if current.weekday() in [6, 0, 1, 2, 3]:
+            pause_dates.append(current.strftime("%Y-%m-%d"))
+        current += timedelta(days=1)
+
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.executemany('''
+                       DELETE FROM meals
+                       WHERE customer_id = ? AND date = ?
+                       ''', [(customer_id, date) for date in pause_dates])
+    
+    cursor.execute('''
+                   SELECT end_date, default_size, default_type_special, weekend_meal, price_day
+                   FROM customers
+                   WHERE id = ?
+                   ''', (customer_id,))
+    
+    row = cursor.fetchone()
+    if not row:
+        conn.close()
+        return
+    
+    end_date_str, size, type_special, weekend_meal, price_day = row
+    end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
+
+    skipped_count = len(pause_dates)
+
+
+    new_end_date = end_date
+    added = 0
+    while added < skipped_count:
+        new_end_date += timedelta(days=1)
+        if new_end_date.weekday() in [6, 0, 1, 2, 3]:
+            added += 1
+
+    cursor.execute('''
+                   UPDATE customers
+                   SET end_date = ?
+                   WHERE id = ?
+                   ''', (new_end_date.strftime("%Y-%m-%d"), customer_id))
+    
+    meal_replacements = generate_meal_days(end_date_str, new_end_date.strftime("%Y-%m-%d"), weekend_meal)
+
+    for meal in meal_replacements[1:]:
+        cursor.execute('''
+                       INSERT INTO meals (customer_id, date, size, type_special, price_day)
+                       VALUES (?, ?, ?, ?, ?)
+                       ''', (customer_id, meal["date"], size, type_special, price_day))
+
+    conn.commit()
+    conn.close()
+
+
 # PRINTING DB (for testing)
 def TEST_PRINT():
     conn = sqlite3.connect(DB_PATH)
@@ -384,7 +451,7 @@ def DELETE_ALL():
     conn.commit()
     conn.close()
 
-# DELETE_ALL()
+#DELETE_ALL()
 
 
 TEST_PRINT()
