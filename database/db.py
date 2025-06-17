@@ -6,6 +6,7 @@ from logic.date_tools import calc_end_date, generate_meal_days, get_current_work
 
 DB_PATH = "database/meals.db"
 
+# for establishing connection with the database
 def SQLite_connection():
 
     try:
@@ -18,6 +19,20 @@ def SQLite_connection():
     finally:
         conn.close()
 
+# backup database
+def SQLite_BACKUP():
+    conn = sqlite3.connect(DB_PATH)
+
+    with io.open('backupdatabase_dump.sql', 'w') as p:
+
+        for line in conn.iterdump():
+
+            p.write('%s\n' % line)
+    
+    print(' Backup perfomed successfully! ')
+    print(' Data Saved as backupdatabase_dump.sql')
+
+    conn.close()
 
 # ADD CUSTOMER PANEL 
 # megkap egy "data" dictionary-t a UI-bol es elmenti az adatbazisba
@@ -363,7 +378,7 @@ def extend_subscription(customer_id, extra_days):
 
     next_day = (datetime.strptime(end_date, "%Y-%m-%d") + timedelta(days=1)).strftime("%Y-%m-%d")
     new_end_date = calc_end_date(next_day, extra_days, weekend_meal)
-    new_duration = duration + extra_days
+    new_duration = duration + int(extra_days)
 
     cursor.execute('''
                    UPDATE customers
@@ -472,6 +487,6 @@ def DELETE_ALL():
     conn.close()
 
 #DELETE_ALL()
-#TEST_PRINT()
+TEST_PRINT()
 
 SQLite_connection()
