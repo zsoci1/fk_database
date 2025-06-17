@@ -61,12 +61,15 @@ def add_customer(data):
 
     return customer_id
 
+
+# megkap egy customer_id-t
+# visszaadja a nevet 
 def search_by_name(customer_id):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
     cursor.execute('''
-                   SELECT name
+                   SELECT name, phone
                    FROM customers
                    WHERE id = ?
                    ''', (customer_id,))
@@ -333,7 +336,24 @@ def extend_subscription(customer_id, extra_days):
     
     end_date, duration, size, type_special, weekend_meal, price_day = row
 
+    new_end_date = calc_end_date(end_date, extra_days, weekend_meal)
+    new_duration = duration + extra_days
 
+    cursor.execute('''
+                   UPDATE customers
+                   SET duration = ?, end_date = ?
+                   WHERE id = ?
+                   ''', (new_duration, new_end_date, customer_id))
+    
+    new_meal_days = generate_meal_days(end_date, new_end_date, weekend_meal)
+    for meal in new_meal_days[1:]: # elsot skippelni (end_date mar letezik)
+        cursor.execute('''
+                       INSERT INTO meals (customer_id, date, size, type_special, price_day)
+                       VALUES (?, ?, ?, ?, ?)
+                       ''', (customer_id, meal["date"], size, type_special, price_day))
+        
+    conn.commit()
+    conn.close()
 
 
 # PRINTING DB (for testing)
@@ -364,3 +384,4 @@ def DELETE_ALL():
 
 TEST_PRINT()
 
+print(search_by_name(1))
