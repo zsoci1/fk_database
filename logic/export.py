@@ -7,6 +7,15 @@ from openpyxl.utils import get_column_letter
 
 DB_PATH = "database/meals.db"
 
+def extract_group_and_clean(address):
+    if "#2" in address:
+        group = 2
+    else:
+        group = 1 # default
+    address_clean = address.replace("#1", "").replace("#2", "").strip()
+
+    return group, address_clean
+
 # DELIVERY EXPORT 
 def export_delivery(date_str):
     os.makedirs("exports", exist_ok=True)
@@ -25,10 +34,13 @@ def export_delivery(date_str):
                    FROM meals m
                    JOIN customers c ON m.customer_id = c.id
                    WHERE m.date = ?
+                   ORDER BY c.address1
                    ''', (date_str,))
     
     rows = cursor.fetchall()
     conn.close()
+
+    rows = sorted(rows, key=lambda row: extract_group_and_clean(f"{row[3]} {row[4]}"))
 
     wb = Workbook()
     ws = wb.active
@@ -57,7 +69,9 @@ def export_delivery(date_str):
     for i, row in enumerate(rows, start=3):
         name, size, type_special, addr1, addr2, phone = row
         full_address = f"{addr1} {addr2}".strip()
-        values = [name, size, type_special, full_address, phone, ""]
+        group, clean_address = extract_group_and_clean(full_address)
+
+        values = [name, size, type_special, clean_address, phone, ""]
 
         for j, value in enumerate(values, start=1):
             cell = ws.cell(row=i, column=j, value=value)
