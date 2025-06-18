@@ -6,6 +6,8 @@ from database.db import update_customer_defaults
 from database.db import get_subscription_info
 from database.db import stop_subscription
 from database.db import activate_subscription
+from database.db import extend_subscription
+from database.db import pause_subscription
 from ui.tools.messsagebox import CustomMessageBox
 
 class ChangeDef(ctk.CTkScrollableFrame):
@@ -28,6 +30,16 @@ class ChangeDef(ctk.CTkScrollableFrame):
         self.meal_data = ["reggeli", "ebed", "snack", "vacsora"]
         self.is_correct = False
         self.updated_label = None
+        self.save_btn = None
+        self.pause_subscription = None
+        self.start_subscription = None
+        
+        self.start_date = None
+        self.end_date = None
+        self.duration = None
+        self.days_left = None
+        self.total_sum = None
+
         self.setup_frame()
 
         # Nev input
@@ -124,10 +136,20 @@ class ChangeDef(ctk.CTkScrollableFrame):
         # Leallitas kezdete entry
         self.pause_start = DateEntry(self, date_pattern='yyyy-mm-dd', width = 13, font=("Arial",14))
         self.pause_start.grid(row =20, column=0, padx=(160,0), pady=10, sticky="w")
+        self.pause_start.delete(0, 'end')
 
         # Leallitas vege entry
         self.pause_end = DateEntry(self, date_pattern='yyyy-mm-dd', width = 13, font=("Arial",14))
         self.pause_end.grid(row =20, column=0, padx=(360,0), pady=10, sticky="w")
+        self.pause_end.delete(0, 'end')
+
+        # Leallitas entry delete gomb
+        self.delete_button = ctk.CTkButton(self, text="X", width=50, command=lambda:self.delete_date_inputs())
+        self.delete_button.grid(row =20, column=0, padx=(430,0), sticky="w")
+
+    def delete_date_inputs(self):
+        self.pause_start.delete(0, 'end')
+        self.pause_end.delete(0, 'end')
 
 
     # Label and Back button
@@ -189,15 +211,10 @@ class ChangeDef(ctk.CTkScrollableFrame):
             if parsed[meal] not in [None, ""]:
                 self.special_entries[i].insert(0, parsed[meal])
 
-        # Load extend
-        # Load pause start
-        # Load pause end
-
-        #self.save_btn = ctk.CTkButton(self, text="Mentés", command=self.error_handling)
-        #self.save_btn.grid(row=12,column=0, padx=20, sticky="w")
-
+        if self.save_btn is None:
+            self.save_btn = ctk.CTkButton(self, text="Mentés", command=self.error_handling)
+            self.save_btn.grid(row=24,column=0, padx=20, sticky="w")
         self.show_subscription()
-
 
     def parse_default_type_special(self,data):
         db_to_display = {
@@ -234,7 +251,8 @@ class ChangeDef(ctk.CTkScrollableFrame):
              CustomMessageBox(title='Hiba', text='Az Ár/nap mező nem lehet üres.')
         elif self.price_entry.get().strip().isdigit() == False:
             CustomMessageBox(title='Hiba', text='Az Ár/napnak egy számnak kell lennie.')
-        # check extend, check pause start, check pause end
+        if self.extend_sub_entry.get().strip() != "" and self.extend_sub_entry.get().strip().isdigit() == False:
+            CustomMessageBox(title='Hiba', text='Az Előfizetés meghosszabbítása mezőnek egy számnak kell lennie.')
         else:
             for var in (self.checkbox_vars):
                 checkbox_value = var.get()
@@ -243,7 +261,13 @@ class ChangeDef(ctk.CTkScrollableFrame):
             if self.is_correct == False:
                 CustomMessageBox(title='Hiba', text='A Típus mező nem lehet üres.')
             else:
-                # Ha minden elfogadhato, akkor meghvjuk a save_and_reset fuggvenyt
+                # Ha minden elfogadhato, akkor meghvjuk a metodusokat
+                if self.extend_sub_entry.get().strip() !="":
+                    extend_subscription(self.chosen_id,int(self.extend_sub_entry.get().strip()))
+                    self.extend_sub_entry.delete(0,"end")
+                if self.pause_start.get() != "" and self.pause_end.get() != "":
+                    pause_subscription(self.chosen_id,self.pause_start.get(),self.pause_end.get())
+                    self.delete_date_inputs()
                 self.save_data()
 
     def save_data(self):
@@ -275,42 +299,62 @@ class ChangeDef(ctk.CTkScrollableFrame):
             update_customer_defaults(self.chosen_id,self.user_data)
             self.mod_page.refresh_page()
 
-            #if self.updated_label:
-                #self.updated_label.destroy()
-            #self.updated_label = ctk.CTkLabel(self, text="Sikeresen frissítve", font=("Arial", 18, "bold"), text_color="green")
-            #self.updated_label.grid(row =13, column=0, padx=20, pady=20, sticky="w")
-            #self.after(10000, self.updated_label.destroy)
+            if self.updated_label:
+                self.updated_label.destroy()
+            self.updated_label = ctk.CTkLabel(self, text="Sikeresen frissítve", font=("Arial", 18, "bold"), text_color="green")
+            self.updated_label.grid(row =23, column=0, padx=20, pady=20, sticky="w")
+            self.after(1000, self.updated_label.destroy)
+            self.show_subscription()
 
     def show_subscription(self):
         data = get_subscription_info(self.chosen_id)
-        print(data)
 
-        # DESTROY BEFORE CREATING AGAIN !!!!!
-        self.start_date = ctk.CTkLabel(self, text=data["start_date"], font=("Arial", 18, "bold"))
-        self.start_date.grid(row =13, column=0, padx=(180,0), sticky="w")
+        if self.start_date is None:
+            self.start_date = ctk.CTkLabel(self, text=data["start_date"], font=("Arial", 18, "bold"))
+            self.start_date.grid(row =13, column=0, padx=(180,0), sticky="w")
+        else:
+            self.start_date.configure(text=data["start_date"])
+        
+        if self.end_date is None:
+            self.end_date = ctk.CTkLabel(self, text=data["end_date"], font=("Arial", 18, "bold"))
+            self.end_date.grid(row =14, column=0, padx=(180,0), sticky="w")
+        else:
+            self.end_date.configure(text=data["end_date"])
 
-        self.end_date = ctk.CTkLabel(self, text=data["end_date"], font=("Arial", 18, "bold"))
-        self.end_date.grid(row =14, column=0, padx=(180,0), sticky="w")
+        if self.duration is None:
+            self.duration =ctk.CTkLabel(self, text=data["duration"], font=("Arial", 18, "bold"))
+            self.duration.grid(row=15, column=0,padx=(180,0), sticky="w")
+        else:
+            self.duration.configure(text=data["duration"])
 
-        self.duration =ctk.CTkLabel(self, text=data["duration"], font=("Arial", 18, "bold"))
-        self.duration.grid(row=15, column=0,padx=(180,0), sticky="w")
+        if self.days_left is None:
+            self.days_left =ctk.CTkLabel(self, text=data["remaining_days"], font=("Arial", 18, "bold"))
+            self.days_left.grid(row=16, column=0,padx=(180,0), sticky="w")
+        else:
+            self.days_left.configure(text=data["remaining_days"])
 
-        self.days_left =ctk.CTkLabel(self, text=data["remaining_days"], font=("Arial", 18, "bold"))
-        self.days_left.grid(row=16, column=0,padx=(180,0), sticky="w")
-
-        self.total_sum = ctk.CTkLabel(self, text=f"{data["total_income"]}€", font=("Arial", 18, "bold"))
-        self.total_sum.grid(row=17, column=0, padx=(180,0), sticky="w")
+        if self.total_sum is None:
+            self.total_sum = ctk.CTkLabel(self, text=f"{data["total_income"]}€", font=("Arial", 18, "bold"))
+            self.total_sum.grid(row=17, column=0, padx=(180,0), sticky="w")
+        else:
+            self.total_sum.configure(text=data["total_income"])
 
         self.subscription_buttons()
 
     def subscription_buttons(self):
         # Elofizetes leallitasa gomb
-        self.pause_subscription = ctk.CTkButton(self, text="Előfizetés leállítása (mai naptól)",font=("Arial", 18), command=stop_subscription(self.chosen_id))
-        self.pause_subscription.grid(row=21, column=0, padx=20, pady=10, sticky="w")
+        if self.pause_subscription is None:
+            self.pause_subscription = ctk.CTkButton(self, text="Előfizetés leállítása (mai naptól)",font=("Arial", 18), command=self.stop_subs)
+            self.pause_subscription.grid(row=21, column=0, padx=20, pady=10, sticky="w")
 
         # Elofizetes aktivalasa gomb
-        self.start_subscription = ctk.CTkButton(self, text="Előfizetés aktiválása",font=("Arial", 18)) # Command uj page
-        self.start_subscription.grid(row=22, column=0, padx=20, pady=10, sticky="w")
+        if self.start_subscription is None:
+            self.start_subscription = ctk.CTkButton(self, text="Előfizetés aktiválása",font=("Arial", 18)) # Command uj page
+            self.start_subscription.grid(row=22, column=0, padx=20, pady=10, sticky="w")
+
+    def stop_subs(self):
+        stop_subscription(self.chosen_id)
+        self.show_subscription()
 
     def update_subscription(self):
         pass
