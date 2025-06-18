@@ -8,14 +8,13 @@ from datetime import datetime
 
 DB_PATH = "database/meals.db"
 
-# szetvalasztja 2 csoportra a cimeket
+
 def extract_group_and_clean(address):
     if "#2" in address:
         return 2, address.replace("#2", "").strip()
     else:
         return 1, address.replace("#1", "").strip()
 
-# exportalja excelbe a futaroknak szukseges infokat a datuma alapjan
 def export_delivery(date_str):
     os.makedirs("exports", exist_ok=True)
 
@@ -63,7 +62,7 @@ def export_delivery(date_str):
     title_cell.alignment = Alignment(horizontal="center", vertical="center")
 
     # 5. Header row
-    headers = ["Nev", "Meret", "Etekezes + Special", "Cim", "Tel.", "Comment"]
+    headers = ["Név", "Méret", "Étekezés", "Cím", "Tel.", "Megjegyzés"]
     ws.append(headers)
     header_font = Font(name="Calibri", size=12, bold=True)
     for col_num, header in enumerate(headers, 1):
@@ -93,9 +92,9 @@ def export_delivery(date_str):
             current_row += 1
 
     # 7. Write both groups
-    write_group("Delutani cimek", group1, current_row)
+    write_group("Délutáni címek", group1, current_row)
     current_row += 1  # Blank line
-    write_group("Esti cimek", group2, current_row)
+    write_group("Esti címek", group2, current_row)
 
     # 8. Center Size column (column B)
     for row in ws.iter_rows(min_row=3, min_col=2, max_col=2, max_row=ws.max_row):
@@ -174,71 +173,80 @@ def export_kitchen(date_str):
     rows = cursor.fetchall()
     conn.close()
 
-    # Count meals: (type, special, size) → count
+    # Group and count meals: summary[size][(type, special)] = count
     summary = {}
     for size, type_special_str in rows:
         parsed = parse_type_special(type_special_str)
+        if size not in summary:
+            summary[size] = {}
         for meal_type, special in parsed:
-            key = (meal_type, special, size)
-            summary[key] = summary.get(key, 0) + 1
+            key = (meal_type, special)
+            summary[size][key] = summary[size].get(key, 0) + 1
 
-    # Sort by: type, special, size in order
-    size_order = {'S': 0, 'M': 1, 'L': 2, 'XL': 3}
-    sorted_items = sorted(summary.items(), key=lambda item: (
-        item[0][0],                 # type
-        item[0][1] or "",           # special (empty if None)
-        size_order.get(item[0][2], 99)  # size sort
-    ))
-
+    size_order = ['S', 'M', 'L', 'XL']
     wb = Workbook()
     ws = wb.active
-    ws.title = "Kitchen Summary"
+    ws.title = "Kitchen"
 
     # Title row
-    ws.merge_cells(start_row=1, start_column=1, end_row=1, end_column=4)
-    title_cell = ws.cell(row=1, column=1, value=f"Kitchen Summary – {date_str}")
+    ws.merge_cells(start_row=1, start_column=1, end_row=1, end_column=3)
+    title_cell = ws.cell(row=1, column=1, value=f"{date_str}")
     title_cell.font = Font(size=14, bold=True)
     title_cell.alignment = Alignment(horizontal="center", vertical="center")
 
-    # Headers
-    headers = ["Type", "Special", "Size", "Count"]
-    ws.append(headers)
-
-    for col_num, header in enumerate(headers, start=1):
-        cell = ws.cell(row=2, column=col_num)
-        cell.font = Font(bold=True)
-        cell.fill = PatternFill(start_color="D9D9D9", fill_type="solid")
-        cell.alignment = Alignment(horizontal="center")
-
-    # Alternating row fill
+    current_row = 3
     fill1 = PatternFill(start_color="FFFFFF", fill_type="solid")
     fill2 = PatternFill(start_color="F2F2F2", fill_type="solid")
 
-    # Fill data
-    for i, ((meal_type, special, size), count) in enumerate(sorted_items, start=3):
-        fill = fill1 if i % 2 == 0 else fill2
-        values = [meal_type, special if special else "", size, count]
+    for size in size_order:
+        if size not in summary:
+            continue
 
-        for j, value in enumerate(values, start=1):
-            cell = ws.cell(row=i, column=j, value=value)
-            cell.fill = fill
-            cell.alignment = Alignment(vertical="center")
+        # Sub-header: Size: S
+        ws.merge_cells(start_row=current_row, start_column=1, end_row=current_row, end_column=3)
+        cell = ws.cell(row=current_row, column=1, value=f"Méret: {size}")
+        cell.font = Font(bold=True, size=12)
+        cell.alignment = Alignment(horizontal="left")
+        current_row += 1
+
+        # Column headers
+        headers = ["Étkezés", "Spec.", "Mennyiség"]
+        for col_num, header in enumerate(headers, start=1):
+            cell = ws.cell(row=current_row, column=col_num, value=header)
+            cell.font = Font(bold=True)
+            cell.fill = PatternFill(start_color="D9D9D9", fill_type="solid")
+            cell.alignment = Alignment(horizontal="center")
+        current_row += 1
+
+        # Table content
+        items = sorted(summary[size].items(), key=lambda x: (x[0][0], x[0][1] or ""))
+        for i, ((meal_type, special), count) in enumerate(items):
+            values = [meal_type, special or "", count]
+            fill = fill1 if i % 2 == 0 else fill2
+            for j, value in enumerate(values, start=1):
+                cell = ws.cell(row=current_row, column=j, value=value)
+                cell.fill = fill
+                cell.alignment = Alignment(vertical="center")
+            current_row += 1
+
+        current_row += 1  # space between tables
 
     # Auto column widths
     for i, col in enumerate(ws.columns, start=1):
         max_length = 0
-        column = get_column_letter(i)
+        col_letter = get_column_letter(i)
         for cell in col:
             try:
                 max_length = max(max_length, len(str(cell.value)))
             except:
                 pass
-        ws.column_dimensions[column].width = max_length + 2
+        ws.column_dimensions[col_letter].width = max_length + 2
+
+    ws.column_dimensions["A"].width = 12
 
     filename = f"exports/kitchen_{date_str}.xlsx"
     wb.save(filename)
     print(f"[✓] Kitchen export completed → {filename}")
-
 
 
 export_delivery("2025-06-19")
