@@ -1,6 +1,7 @@
 import tkinter as tk
 import customtkinter as ctk
 from tkcalendar import DateEntry
+from datetime import datetime
 from database.db import get_customer_defaults
 from database.db import update_customer_defaults
 from database.db import get_subscription_info
@@ -9,6 +10,7 @@ from database.db import activate_subscription
 from database.db import extend_subscription
 from database.db import pause_subscription
 from ui.tools.messsagebox import CustomMessageBox
+from ui.activate_subs import ActivateSubs
 
 class ChangeDef(ctk.CTkScrollableFrame):
     def __init__(self, parent, mainmenu, mod_page):
@@ -33,7 +35,6 @@ class ChangeDef(ctk.CTkScrollableFrame):
         self.save_btn = None
         self.pause_subscription = None
         self.start_subscription = None
-        
         self.start_date = None
         self.end_date = None
         self.duration = None
@@ -171,7 +172,7 @@ class ChangeDef(ctk.CTkScrollableFrame):
         self.back_btn.grid(row=23, column=0, padx=20, pady=20, sticky="w")
 
     def load_input(self):
-        
+        self.delete_date_inputs()
         self.chosen_id = self.mod_page.chosen_id
         self.user_data = get_customer_defaults(self.chosen_id)
 
@@ -243,6 +244,12 @@ class ChangeDef(ctk.CTkScrollableFrame):
         return result
     
     def error_handling(self):
+        if self.pause_start.get() != "" and self.pause_end.get() != "":
+            start_date_str = self.pause_start.get()
+            end_date_str = self.pause_end.get()
+            start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
+            end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
+
         if self.name_entry.get().strip() == "":
             CustomMessageBox(title='Hiba', text='A Név mező nem lehet üres.')
         elif self.size_combobox.get().strip() == "":
@@ -251,8 +258,10 @@ class ChangeDef(ctk.CTkScrollableFrame):
              CustomMessageBox(title='Hiba', text='Az Ár/nap mező nem lehet üres.')
         elif self.price_entry.get().strip().isdigit() == False:
             CustomMessageBox(title='Hiba', text='Az Ár/napnak egy számnak kell lennie.')
-        if self.extend_sub_entry.get().strip() != "" and self.extend_sub_entry.get().strip().isdigit() == False:
+        elif self.extend_sub_entry.get().strip() != "" and self.extend_sub_entry.get().strip().isdigit() == False:
             CustomMessageBox(title='Hiba', text='Az Előfizetés meghosszabbítása mezőnek egy számnak kell lennie.')
+        elif self.pause_start.get() != "" and self.pause_end.get() != "" and start_date > end_date:
+            CustomMessageBox(title='Hiba', text='A leállítás vége nem lehet hamarabb mint a leállítás kezdete.')
         else:
             for var in (self.checkbox_vars):
                 checkbox_value = var.get()
@@ -267,8 +276,8 @@ class ChangeDef(ctk.CTkScrollableFrame):
                     self.extend_sub_entry.delete(0,"end")
                 if self.pause_start.get() != "" and self.pause_end.get() != "":
                     pause_subscription(self.chosen_id,self.pause_start.get(),self.pause_end.get())
-                    self.delete_date_inputs()
                 self.save_data()
+                self.delete_date_inputs()
 
     def save_data(self):
         if self.is_correct == True:
@@ -302,7 +311,7 @@ class ChangeDef(ctk.CTkScrollableFrame):
             if self.updated_label:
                 self.updated_label.destroy()
             self.updated_label = ctk.CTkLabel(self, text="Sikeresen frissítve", font=("Arial", 18, "bold"), text_color="green")
-            self.updated_label.grid(row =23, column=0, padx=20, pady=20, sticky="w")
+            self.updated_label.grid(row =25, column=0, padx=20, pady=20, sticky="w")
             self.after(1000, self.updated_label.destroy)
             self.show_subscription()
 
@@ -337,27 +346,31 @@ class ChangeDef(ctk.CTkScrollableFrame):
             self.total_sum = ctk.CTkLabel(self, text=f"{data["total_income"]}€", font=("Arial", 18, "bold"))
             self.total_sum.grid(row=17, column=0, padx=(180,0), sticky="w")
         else:
-            self.total_sum.configure(text=data["total_income"])
+            self.total_sum.configure(text=f"{data["total_income"]}€")
 
         self.subscription_buttons()
 
     def subscription_buttons(self):
         # Elofizetes leallitasa gomb
         if self.pause_subscription is None:
-            self.pause_subscription = ctk.CTkButton(self, text="Előfizetés leállítása (mai naptól)",font=("Arial", 18), command=self.stop_subs)
+            self.pause_subscription = ctk.CTkButton(self, text="ELŐFIZETÉS LEÁLLÍTÁSA (mai naptól)",font=("Arial", 18), command=self.stop_subs)
             self.pause_subscription.grid(row=21, column=0, padx=20, pady=10, sticky="w")
 
         # Elofizetes aktivalasa gomb
         if self.start_subscription is None:
-            self.start_subscription = ctk.CTkButton(self, text="Előfizetés aktiválása",font=("Arial", 18)) # Command uj page
+            self.start_subscription = ctk.CTkButton(self, text="ELŐFIZETÉS AKTIVÁLÁSA ⧉",font=("Arial", 18), command=self.activate_subscription) 
             self.start_subscription.grid(row=22, column=0, padx=20, pady=10, sticky="w")
 
     def stop_subs(self):
         stop_subscription(self.chosen_id)
         self.show_subscription()
 
-    def update_subscription(self):
-        pass
+    def activate_subscription(self):
+        if not hasattr(self, "activate_window") or not self.activate_window.winfo_exists():
+            self.activate_window = ActivateSubs(self,self.chosen_id, self.weekend_checkbox.get())
+        else:
+            self.activate_window.focus()
+
 
 
 

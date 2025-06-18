@@ -24,6 +24,7 @@ class ModPage(ctk.CTkFrame):
         self.label = ctk.CTkLabel(self, text="Módosítás", font=("Arial", 30, "bold"))
         self.label.grid(row = 0, column = 0, padx =20, pady =30, sticky="nw")
 
+
     def search_bar(self):
         self.search_entry = ctk.CTkEntry(self, placeholder_text="Keresés...")
         self.search_entry.grid(row =1, column=0, padx=(20,0), pady=10, sticky="w")
