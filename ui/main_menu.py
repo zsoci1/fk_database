@@ -1,8 +1,8 @@
 import customtkinter as ctk
-from ui.home import HomePage
 from ui.add_clients import AddPage
 from ui.edit_meals import ModPage
 from ui.change_def import ChangeDef
+from ui.export import ExportPage
 
 # Main menu class
 class MainMenu(ctk.CTk):
@@ -14,8 +14,8 @@ class MainMenu(ctk.CTk):
         self.create_widgets()
         # Load all pages into a dictionary
         self.pages = {}
-        self.pages[HomePage] = HomePage(self.content_frame, self)
         self.pages[AddPage] = AddPage(self.content_frame, self)
+        self.pages[ExportPage] = ExportPage(self.content_frame, self)
         # Create ModPage first
         mod_page = ModPage(self.content_frame, self)
         self.pages[ModPage] = mod_page
@@ -26,7 +26,7 @@ class MainMenu(ctk.CTk):
             page.grid_remove()
         self.create_buttons()
         # Show efault page
-        self.show_page(HomePage)
+        self.show_page(ExportPage)
 
     # Setting up window
     def setup_window(self):
@@ -56,20 +56,18 @@ class MainMenu(ctk.CTk):
 
     # Creating buttons in sidebar_frame
     def create_buttons(self):   
-        self.statement_btn = ctk.CTkButton(self.sidebar_frame, text = "Kimutatás", font=("Arial", 26, "bold" ), command=lambda:self.show_page(HomePage))
-        self.statement_btn.grid(row = 1, column = 0, padx = 20, pady = 30)
+
+        self.export_btn = ctk.CTkButton(self.sidebar_frame, text = "Exportálás", font=("Arial", 26, "bold" ), command=lambda:self.show_page(ExportPage))
+        self.export_btn.grid(row =1, column = 0, padx = 20, pady = 30)
 
         self.add_clients_btn = ctk.CTkButton(self.sidebar_frame, text = "Hozzáadás", font=("Arial", 26, "bold" ), command=lambda:self.show_page(AddPage))
-        self.add_clients_btn.grid(row = 2, column = 0, padx = 20, pady = 30)
+        self.add_clients_btn.grid(row =2, column = 0, padx = 20, pady = 30)
 
         self.edit_meals_btn = ctk.CTkButton(self.sidebar_frame, text = "Módosítás", font=("Arial", 26, "bold" ), command=lambda:self.show_page(ModPage))
-        self.edit_meals_btn.grid(row = 3, column = 0, padx = 20, pady = 30)
-
-        self.export_btn = ctk.CTkButton(self.sidebar_frame, text = "Exportálás", font=("Arial", 26, "bold" ))
-        self.export_btn.grid(row = 4, column = 0, padx = 20, pady = 30)
+        self.edit_meals_btn.grid(row =3, column = 0, padx = 20, pady = 30)
 
         self.exit_btn = ctk.CTkButton(self.sidebar_frame, text = "Kilépés", font=("Arial", 26, "bold" ), command=self.master.destroy)
-        self.exit_btn.grid(row = 5, column = 0, padx = 20, pady = 30)
+        self.exit_btn.grid(row =4, column = 0, padx = 20, pady = 30)
 
     def show_page(self, page_name):
         # Load user_input data before showing ChangeDef

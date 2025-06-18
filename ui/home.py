@@ -1,7 +1,7 @@
 import customtkinter as ctk
 
 # Home page class
-class HomePage(ctk.CTkFrame):
+class BreakdownPage(ctk.CTkFrame):
     def __init__(self, parent, mainmenu):
         super().__init__(parent)
         self.mainmenu = mainmenu
