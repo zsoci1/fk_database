@@ -163,63 +163,82 @@ def get_kitchen_summary(date_str):
 
 def export_kitchen(date_str):
     os.makedirs("exports", exist_ok=True)
-    summary = get_kitchen_summary(date_str)
+
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute('''
+        SELECT size, type_special FROM meals
+        WHERE date = ?
+    ''', (date_str,))
+    rows = cursor.fetchall()
+    conn.close()
+
+    # Count meals: (type, special, size) → count
+    summary = {}
+    for size, type_special_str in rows:
+        parsed = parse_type_special(type_special_str)
+        for meal_type, special in parsed:
+            key = (meal_type, special, size)
+            summary[key] = summary.get(key, 0) + 1
+
+    # Sort by: type, special, size in order
+    size_order = {'S': 0, 'M': 1, 'L': 2, 'XL': 3}
+    sorted_items = sorted(summary.items(), key=lambda item: (
+        item[0][0],                 # type
+        item[0][1] or "",           # special (empty if None)
+        size_order.get(item[0][2], 99)  # size sort
+    ))
 
     wb = Workbook()
     ws = wb.active
-    ws.title = "Kitchen"
+    ws.title = "Kitchen Summary"
 
-    # Title
-    title = f"{date_str}"
+    # Title row
     ws.merge_cells(start_row=1, start_column=1, end_row=1, end_column=4)
-    title_cell = ws.cell(row=1, column=1, value=title)
-    title_cell.font = Font(name="Calibri", size=14, bold=True)
+    title_cell = ws.cell(row=1, column=1, value=f"Kitchen Summary – {date_str}")
+    title_cell.font = Font(size=14, bold=True)
     title_cell.alignment = Alignment(horizontal="center", vertical="center")
 
-    # Header
+    # Headers
     headers = ["Type", "Special", "Size", "Count"]
     ws.append(headers)
-    header_font = Font(name="Calibri", size=12, bold=True)
-    for col_num, header in enumerate(headers, 1):
-        cell = ws.cell(row=2, column=col_num, value=header)
-        cell.font = header_font
-        cell.fill = PatternFill(start_color="D9D9D9", fill_type="solid")
-        cell.alignment = Alignment(horizontal="center", vertical="center")
 
-    # Rows
+    for col_num, header in enumerate(headers, start=1):
+        cell = ws.cell(row=2, column=col_num)
+        cell.font = Font(bold=True)
+        cell.fill = PatternFill(start_color="D9D9D9", fill_type="solid")
+        cell.alignment = Alignment(horizontal="center")
+
+    # Alternating row fill
     fill1 = PatternFill(start_color="FFFFFF", fill_type="solid")
     fill2 = PatternFill(start_color="F2F2F2", fill_type="solid")
 
-    sorted_items = sorted(summary.items(), key=lambda item: (
-    item[0][0],               
-    item[0][1] or "",         
-    item[0][2]                
-    ))
-
+    # Fill data
     for i, ((meal_type, special, size), count) in enumerate(sorted_items, start=3):
-        special_value = "" if special is None else special
-        values = [meal_type, special_value, size, count]
+        fill = fill1 if i % 2 == 0 else fill2
+        values = [meal_type, special if special else "", size, count]
+
         for j, value in enumerate(values, start=1):
             cell = ws.cell(row=i, column=j, value=value)
-            cell.fill = fill1 if i % 2 == 0 else fill2
-            cell.alignment = Alignment(horizontal="center", vertical="center")
+            cell.fill = fill
+            cell.alignment = Alignment(vertical="center")
 
-    # Auto-fit columns
-    for i, col in enumerate(ws.columns, 1):
+    # Auto column widths
+    for i, col in enumerate(ws.columns, start=1):
         max_length = 0
         column = get_column_letter(i)
         for cell in col:
             try:
-                value_len = len(str(cell.value))
-                if value_len > max_length:
-                    max_length = value_len
+                max_length = max(max_length, len(str(cell.value)))
             except:
                 pass
-        ws.column_dimensions[column].width = max(max_length + 2, 12)
+        ws.column_dimensions[column].width = max_length + 2
 
     filename = f"exports/kitchen_{date_str}.xlsx"
     wb.save(filename)
-    print(f"[✓] Kitchen export completed → {filename}") 
+    print(f"[✓] Kitchen export completed → {filename}")
+
 
 
 export_delivery("2025-06-19")
