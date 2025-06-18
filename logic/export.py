@@ -95,4 +95,3 @@ def export_delivery(date_str):
     print(f"[✓] Delivery export completed → {filename}")
 
 
-export_delivery("2025-06-19")
