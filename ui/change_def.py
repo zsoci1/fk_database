@@ -1,7 +1,7 @@
 import tkinter as tk
 import customtkinter as ctk
 from tkcalendar import DateEntry
-from datetime import datetime
+from datetime import datetime, date
 from database.db import get_customer_defaults
 from database.db import update_customer_defaults
 from database.db import get_subscription_info
@@ -391,9 +391,9 @@ class ChangeDef(ctk.CTkScrollableFrame):
 
     # Create TopLevel for activate subscription
     def activate_subscription(self):
-        start = self.data["start_date"]
-        end = self.data["end_date"]
-        if (start < end):
+        today = date.today().isoformat()
+        end = self.data["end_date"]  
+        if end > today:  
             # if customer is active
             CustomMessageBox(title='Hiba', text='A megrendelő már aktív.')
         else:

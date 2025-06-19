@@ -35,6 +35,22 @@ class MainMenu(ctk.CTk):
         self.master.resizable(True, True)
         self.master.grid_rowconfigure(0, weight=1)
         self.master.grid_columnconfigure(1, weight =1)
+
+        # Desired window size
+        width = 1000
+        height = 700
+
+        # Get screen dimensions
+        screen_width = self.master.winfo_screenwidth()
+        screen_height = self.master.winfo_screenheight()
+
+        # Calculate position
+        x = int((screen_width / 2) - (width / 2))
+        y = int((screen_height / 2) - (height / 2))
+
+        # Apply size and position
+        self.master.geometry(f"{width}x{height}+{x}+{y}")
+
         ctk.set_appearance_mode("light")
         ctk.set_default_color_theme("blue")
 

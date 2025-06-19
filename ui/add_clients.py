@@ -41,25 +41,25 @@ class AddPage(ctk.CTkFrame):
         # Nev input
         self.name_label = ctk.CTkLabel(self, text="Név", font=("Arial", 18))
         self.name_label.grid(row =1, column =0, padx =20, pady=10, sticky="w")
-        self.name_entry = ctk.CTkEntry(self)
+        self.name_entry = ctk.CTkEntry(self, width=200)
         self.name_entry.grid(row =2, column =0, padx=20, sticky="w")
 
         # Telefonszam input
         self.phone_label = ctk.CTkLabel(self, text="Telefonszám", font=("Arial", 18))
         self.phone_label.grid(row =1, column =1, padx =20, pady=10, sticky="w")
-        self.phone_entry = ctk.CTkEntry(self)
+        self.phone_entry = ctk.CTkEntry(self, width=200)
         self.phone_entry.grid(row =2, column =1, padx=20, sticky="w")
 
         # Cim 1 input
         self.first_address_label = ctk.CTkLabel(self, text="Cím 1", font=("Arial", 18))
         self.first_address_label.grid(row =3, column =0, padx =20, pady=10, sticky="w")
-        self.first_address_entry = ctk.CTkEntry(self, placeholder_text="Hétköznap")
+        self.first_address_entry = ctk.CTkEntry(self, placeholder_text="Hétköznap", width=200)
         self.first_address_entry.grid(row =4, column =0, padx=20, sticky="w")
 
         # Cim 2 input
         self.second_address_label = ctk.CTkLabel(self, text="Cím 2", font=("Arial", 18))
         self.second_address_label.grid(row =3, column =1, padx =20, pady=10, sticky="w")
-        self.second_address_entry = ctk.CTkEntry(self, placeholder_text="Hétvége")
+        self.second_address_entry = ctk.CTkEntry(self, placeholder_text="Hétvége", width=200)
         self.second_address_entry.grid(row =4, column =1, padx=20, sticky="w")
 
         # Elofizetes kezdete input
@@ -71,7 +71,7 @@ class AddPage(ctk.CTkFrame):
         # Idotartam input
         self.duration_label = ctk.CTkLabel(self, text="Előfizetés időtartama", font=("Arial", 18))
         self.duration_label.grid(row =5, column =1, padx =20, pady=10, sticky="w")
-        self.duration_entry = ctk.CTkEntry(self, placeholder_text="Napok száma")
+        self.duration_entry = ctk.CTkEntry(self, placeholder_text="Napok száma", width=200)
         self.duration_entry.grid(row =6, column = 1, padx=20, sticky="w")
 
         # Hetvege input
