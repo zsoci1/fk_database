@@ -335,7 +335,7 @@ class ChangeDef(ctk.CTkScrollableFrame):
                 self.updated_label.destroy()
             self.updated_label = ctk.CTkLabel(self, text="Sikeresen frissítve", font=("Arial", 18, "bold"), text_color="green")
             self.updated_label.grid(row =25, column=0, padx=20, pady=20, sticky="w")
-            self.after(1000, self.updated_label.destroy)
+            self.after(10000, self.updated_label.destroy)
             self.show_subscription()
 
     # Show subscription info

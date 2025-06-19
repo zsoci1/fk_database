@@ -33,6 +33,7 @@ class MainMenu(ctk.CTk):
         self.master.title("FitKitchen Manager")
         self.master.geometry("1000x700")
         self.master.resizable(True, True)
+        self.master.minsize(1000, 700)
         self.master.grid_rowconfigure(0, weight=1)
         self.master.grid_columnconfigure(1, weight =1)
 
