@@ -111,7 +111,7 @@ def export_delivery(date_str):
     ws.column_dimensions["C"].width = 60  # Type (wrap)
     ws.column_dimensions["D"].width = 28  # Address
     ws.column_dimensions["E"].width = 15  # Phone
-    ws.column_dimensions["F"].width = 20  # Comment
+    ws.column_dimensions["F"].width = 30  # Comment
 
     # 11. Save file
     filename = f"exports/delivery_{date_str}.xlsx"
