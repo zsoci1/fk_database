@@ -88,7 +88,7 @@ def export_delivery(date_str):
             for j, value in enumerate(values, start=1):
                 cell = ws.cell(row=current_row, column=j, value=value)
                 cell.fill = fill1 if current_row % 2 == 0 else fill2
-                cell.alignment = Alignment(vertical="center")
+                cell.alignment = Alignment(wrap_text=True, vertical="center")
             current_row += 1
 
     # 7. Write both groups
@@ -99,27 +99,19 @@ def export_delivery(date_str):
     # 8. Center Size column (column B)
     for row in ws.iter_rows(min_row=3, min_col=2, max_col=2, max_row=ws.max_row):
         for cell in row:
-            cell.alignment = Alignment(horizontal="center", vertical="center")
+            cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
 
     # 9. Row height tweak
     for row_idx in range(3, ws.max_row + 1):
-        ws.row_dimensions[row_idx].height = 20
+        ws.row_dimensions[row_idx].height = 25
 
-    # 10. Auto-fit columns
-    for i, col in enumerate(ws.columns, 1):
-        max_length = 0
-        column = get_column_letter(i)
-        for cell in col:
-            try:
-                value_len = len(str(cell.value))
-                if value_len > max_length:
-                    max_length = value_len
-            except:
-                pass
-        ws.column_dimensions[column].width = max(max_length + 2, 12)
-
-    # Comment column
-    ws.column_dimensions["F"].width = 30
+    # 10. Column widths (fit A4 width approx)
+    ws.column_dimensions["A"].width = 18  # Name
+    ws.column_dimensions["B"].width = 8   # Size
+    ws.column_dimensions["C"].width = 60  # Type (wrap)
+    ws.column_dimensions["D"].width = 28  # Address
+    ws.column_dimensions["E"].width = 15  # Phone
+    ws.column_dimensions["F"].width = 20  # Comment
 
     # 11. Save file
     filename = f"exports/delivery_{date_str}.xlsx"
@@ -248,9 +240,3 @@ def export_kitchen(date_str):
     wb.save(filename)
     print(f"[✓] Kitchen export completed → {filename}")
 
-
-export_delivery("2025-06-19")
-summary = get_kitchen_summary("2025-06-19")
-for key, count in summary.items():
-    print(f"{key}: {count}")
-export_kitchen("2025-06-19")
