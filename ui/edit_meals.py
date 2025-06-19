@@ -21,7 +21,7 @@ class ModPage(ctk.CTkFrame):
     def setup_frame(self):
         self.grid_columnconfigure(0, weight=0)
         self.grid_rowconfigure(0, weigh=0)
-        self.label = ctk.CTkLabel(self, text="Módosítás", font=("Arial", 30, "bold"))
+        self.label = ctk.CTkLabel(self, text="Módosítás", font=("Verdana", 30, "bold"))
         self.label.grid(row = 0, column = 0, padx =20, pady =30, sticky="nw")
 
 
@@ -101,15 +101,15 @@ class ModPage(ctk.CTkFrame):
 
         name_and_phone = search_by_name(self.chosen_id)
         
-        self.name_label = ctk.CTkLabel(self, text='Név:', font=("Arial", 18, "bold"))
+        self.name_label = ctk.CTkLabel(self, text='Név:', font=("Verdana", 18, "bold"))
         self.name_label.grid(row=2, column=0, padx=(20,0), sticky="w")
-        self.customer_name_label = ctk.CTkLabel(self, text=name_and_phone[0], font=("Arial", 18))
-        self.customer_name_label.grid(row=2, column=0, padx=(65,0), sticky="w")
+        self.customer_name_label = ctk.CTkLabel(self, text=name_and_phone[0], font=("Verdana", 18))
+        self.customer_name_label.grid(row=2, column=0, padx=(70,0), sticky="w")
 
-        self.phone_label = ctk.CTkLabel(self, text='Tel.szám:', font=("Arial", 18, "bold"))
+        self.phone_label = ctk.CTkLabel(self, text='Tel.szám:', font=("Verdana", 18, "bold"))
         self.phone_label.grid(row=3, column=0, padx=(20,0), sticky="w")
-        self.customer_phone_label = ctk.CTkLabel(self, text=name_and_phone[1], font=("Arial", 18))
-        self.customer_phone_label.grid(row=3, column=0, padx=(105,0), sticky="w")
+        self.customer_phone_label = ctk.CTkLabel(self, text=name_and_phone[1], font=("Verdana", 18))
+        self.customer_phone_label.grid(row=3, column=0, padx=(120,0), sticky="w")
 
         self.change_default()
 
@@ -129,26 +129,26 @@ class ModPage(ctk.CTkFrame):
 
         # Create label for current work week
         if self.week_label is None:
-            self.week_label = ctk.CTkLabel(self, text=f"Aktuális hét: {formatted_date}", font=("Arial", 18))
+            self.week_label = ctk.CTkLabel(self, text=f"Aktuális hét: {formatted_date}", font=("Verdana", 18))
             self.week_label.grid(row=9, column=0, padx=20, sticky="w")
 
         # Whisper button for correct input
         if self.whisper_btn is None:
-            self.whisper_btn = ctk.CTkButton(self, text="Súgó", command=lambda:CustomMessageBox(
+            self.whisper_btn = ctk.CTkButton(self, text="Súgó", font=("Verdana", 12),command=lambda:CustomMessageBox(
             title='Súgó',
             text='Típus mező használata:\n❌ reggeli vega tejmentes, ebéd vega...\n✔️ reggeli:vega tejmentes, ebed:vega...',    
             ))
-            self.whisper_btn.grid(row=9, column=1, padx=20, sticky="w")
+            self.whisper_btn.grid(row=10, column=0, padx=20, pady=10, sticky="w")
 
         # Create treeview
         self.editable_treeview = EditableTreeView(self, meal_for_week, self.chosen_id, update_meal_type) 
-        self.editable_treeview.grid(row=10, column=0, padx=20, pady=10, sticky="nsew")
+        self.editable_treeview.grid(row=11, column=0, padx=20, pady=10, sticky="nsew")
 
         self.show_customer_info()
 
     def change_default(self):
         if self.change_def_btn is None:
-            self.change_def_btn = ctk.CTkButton(self, text="Megrendelő adatainak szerkesztése", font=("Arial", 18), command=lambda: self.mainmenu.show_page(ChangeDef))
+            self.change_def_btn = ctk.CTkButton(self, text="Megrendelő adatainak szerkesztése", font=("Verdana", 18), command=lambda: self.mainmenu.show_page(ChangeDef))
             self.change_def_btn.grid(row =6, column =0, padx=20, pady=20, sticky="w")
     
     def delete_input(self,input):

@@ -14,33 +14,33 @@ class ExportPage(ctk.CTkFrame):
 
     # Label
     def setup_frame(self):
-        self.grid_columnconfigure(1, weight=1)
-        self.grid_rowconfigure(0, weigh=0)
-        self.label = ctk.CTkLabel(self, text="Exportálás", font=("Arial", 30, "bold"))
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=0)
+        self.label = ctk.CTkLabel(self, text="Exportálás", font=("Verdana", 30, "bold"))
         self.label.grid(row = 0, column = 0, padx =20, pady =30, sticky="nw")
 
     # Create all widgets
     def create_widgets(self):
         # Date label
-        self.date_label = ctk.CTkLabel(self, text="Dátum", font=("Arial", 18))
-        self.date_label.grid(row=1, column=0, padx=20, pady=10, sticky="w")
+        self.date_label = ctk.CTkLabel(self, text="Dátum", font=("Verdana", 18))
+        self.date_label.grid(row=1, column=0, padx=20, pady=5, sticky="w")
         
         # Date picker
-        self.date_picker = DateEntry(self, date_pattern='yyyy-mm-dd', width = 13, font=("Arial",14))
+        self.date_picker = DateEntry(self, date_pattern='yyyy-mm-dd', width = 13, font=("Verdana",14))
         self.date_picker.grid(row=2, column=0, padx=25, pady=10, sticky="w")
         self.tomorrow = (date.today() + timedelta(days=1)).isoformat()
         self.date_picker.set_date(self.tomorrow)
 
-        self.delivery_export_btn = ctk.CTkButton(self, text="Futár EXPORT", command=self.exp_del)
+        self.delivery_export_btn = ctk.CTkButton(self,font=("Verdana", 12), text="Futár EXPORT", command=self.exp_del)
         self.delivery_export_btn.grid(row=3, column=0, padx=20, pady=10, sticky="w")
 
-        self.cook_export_btn = ctk.CTkButton(self, text="Szakács EXPORT", command=self.exp_kit)
+        self.cook_export_btn = ctk.CTkButton(self,font=("Verdana", 12), text="Szakács EXPORT", command=self.exp_kit)
         self.cook_export_btn.grid(row=4, column=0, padx=20, pady=10, sticky="w")
 
-        self.all_export_btn = ctk.CTkButton(self, text="Minden EXPORT", command=self.exp_all)
+        self.all_export_btn = ctk.CTkButton(self,font=("Verdana", 12), text="Minden EXPORT", command=self.exp_all)
         self.all_export_btn.grid(row=5, column=0, padx=20, pady=10, sticky="w")
 
-        self.location_label = ctk.CTkLabel(self, text=f"Mentés helye: ...\\exports\\{self.date_picker.get().strip()}.xlsx")
+        self.location_label = ctk.CTkLabel(self,font=("Verdana", 10),text=f"Mentés helye: ...\\exports\\{self.date_picker.get().strip()}.xlsx")
         self.location_label.grid(row=6,column=0, padx=20, pady=10, sticky="w")
     
     def exp_del(self):
@@ -49,9 +49,7 @@ class ExportPage(ctk.CTkFrame):
         else:
             export_delivery(self.date_picker.get().strip())
             if self.date_picker.get().strip() != self.tomorrow:
-                self.location_label.destroy()
-                self.location_label = ctk.CTkLabel(self, text=f"Mentés helye: ...\\exports\\{self.date_picker.get().strip()}.xlsx")
-                self.location_label.grid(row=6,column=0, padx=20, pady=10, sticky="w")
+                self.update_location_label()
 
     def exp_kit(self):
         if self.date_picker.get().strip() =="":
@@ -59,10 +57,7 @@ class ExportPage(ctk.CTkFrame):
         else:
             export_kitchen(self.date_picker.get().strip())
             if self.date_picker.get().strip() != self.tomorrow:
-                self.location_label.destroy()
-                self.location_label = ctk.CTkLabel(self, text=f"Mentés helye: ...\\exports\\{self.date_picker.get().strip()}.xlsx")
-                self.location_label.grid(row=6,column=0, padx=20, pady=10, sticky="w")
-
+                self.update_location_label()
     def exp_all(self):
         if self.date_picker.get().strip() =="":
                 CustomMessageBox(title='Hiba', text='A Dátum mező nem lehet üres.')
@@ -70,10 +65,13 @@ class ExportPage(ctk.CTkFrame):
             export_delivery(self.date_picker.get().strip())
             export_kitchen(self.date_picker.get().strip())
             if self.date_picker.get().strip() != self.tomorrow:
-                self.location_label.destroy()
-                self.location_label = ctk.CTkLabel(self, text=f"Mentés helye: ...\\exports\\{self.date_picker.get().strip()}.xlsx")
-                self.location_label.grid(row=6,column=0, padx=20, pady=10, sticky="w")
+                self.update_location_label()
     
+    def update_location_label(self):
+        self.location_label.destroy()
+        self.location_label = ctk.CTkLabel(self, text=f"Mentés helye: ...\\exports\\{self.date_picker.get().strip()}.xlsx")
+        self.location_label.grid(row=6, column=0, padx=20, pady=10, sticky="w")
+
 
 
 

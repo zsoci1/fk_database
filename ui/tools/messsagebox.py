@@ -9,11 +9,11 @@ class CustomMessageBox(ctk.CTkToplevel):
         self.grab_set() 
         
         # Szöveg megjelenítése (word-wrap)
-        self.label = ctk.CTkLabel(self, text=text, wraplength=width - 40, justify="left")
+        self.label = ctk.CTkLabel(self, text=text,font=("Verdana", 12), wraplength=width - 40, justify="left")
         self.label.pack(padx=20, pady=(20, 10), fill="both", expand=True)
         
         # OK gomb
-        self.ok_button = ctk.CTkButton(self, text="OK", command=self.destroy)
+        self.ok_button = ctk.CTkButton(self, text="OK",font=("Verdana", 10), command=self.destroy)
         self.ok_button.pack(pady=(0, 20))
         
         # Ablak középre helyezése a főablakhoz képest
