@@ -204,15 +204,34 @@ def update_customer_defaults(customer_id, data):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
-    # 1. Get old values
+    # 1. Get old values and end_date
     cursor.execute('''
-        SELECT weekend_meal, end_date
+        SELECT end_date
         FROM customers
         WHERE id = ?
     ''', (customer_id,))
-    old_weekend_meal, end_date_str = cursor.fetchone()
+    row = cursor.fetchone()
+    if not row:
+        conn.close()
+        return
+    end_date_str = row[0]
 
-    # 2. Update customer table
+    # 2. Get all existing meal dates for customer from today to end_date
+    today = datetime.today().strftime("%Y-%m-%d")
+    cursor.execute('''
+        SELECT date FROM meals
+        WHERE customer_id = ? AND date >= ?
+    ''', (customer_id, today))
+    existing_dates = set(row[0] for row in cursor.fetchall())
+
+    # 3. Generate full list of required meal days
+    all_days = generate_meal_days(today, end_date_str, data["weekend_meal"])
+    all_dates = set(day["date"] for day in all_days)
+
+    # 4. Determine paused/skipped dates
+    paused_dates = all_dates - existing_dates
+
+    # 5. Update customer defaults
     cursor.execute('''
         UPDATE customers
         SET name = ?, address1 = ?, address2 = ?, phone = ?, weekend_meal = ?,
@@ -230,17 +249,16 @@ def update_customer_defaults(customer_id, data):
         customer_id
     ))
 
-    # 3. From today forward: delete all meals and regenerate
-    today = datetime.today().strftime("%Y-%m-%d")
+    # 6. Delete only non-paused future meals
     cursor.execute('''
         DELETE FROM meals
-        WHERE customer_id = ?
-        AND date >= ?
+        WHERE customer_id = ? AND date >= ?
     ''', (customer_id, today))
 
-    # 4. Generate updated meal rows
-    meal_days = generate_meal_days(today, end_date_str, data["weekend_meal"])
-    for day in meal_days:
+    # 7. Re-insert meals except paused ones
+    for day in all_days:
+        if day["date"] in paused_dates:
+            continue
         cursor.execute('''
             INSERT INTO meals (customer_id, date, size, type_special, price_day)
             VALUES (?, ?, ?, ?, ?)
@@ -508,3 +526,4 @@ def DELETE_ALL():
 
 # DELETE_ALL()
 TEST_PRINT()
+
