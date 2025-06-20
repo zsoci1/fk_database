@@ -40,49 +40,49 @@ class AddPage(ctk.CTkFrame):
 
         self.grid_rowconfigure(999, weight=1)  # Ez a sor alul "kitölti" az üres helyet
         
-        self.label = ctk.CTkLabel(self, text="Hozzáadás", font=("Arial", 30, "bold"))
+        self.label = ctk.CTkLabel(self, text="Hozzáadás", font=("Verdana", 30, "bold"))
         self.label.grid(row = 0, column = 0, padx =20, pady =30, sticky="nw")
 
     # Input mezok megjelenitese es mentes gomb
     def user_input(self):
         # Nev input
-        self.name_label = ctk.CTkLabel(self, text="Név", font=("Arial", 18))
+        self.name_label = ctk.CTkLabel(self, text="Név", font=("Verdana", 18))
         self.name_label.grid(row =1, column =0, padx =20, pady=10, sticky="w")
         self.name_entry = ctk.CTkEntry(self)
         self.name_entry.grid(row =2, column =0, padx=20, sticky="ew")
 
         # Telefonszam input
-        self.phone_label = ctk.CTkLabel(self, text="Telefonszám", font=("Arial", 18))
+        self.phone_label = ctk.CTkLabel(self, text="Telefonszám", font=("Verdana", 18))
         self.phone_label.grid(row =1, column =1, padx =20, pady=10, sticky="w")
         self.phone_entry = ctk.CTkEntry(self)
         self.phone_entry.grid(row =2, column =1, padx=20, sticky="ew")
 
         # Cim 1 input
-        self.first_address_label = ctk.CTkLabel(self, text="Cím 1", font=("Arial", 18))
+        self.first_address_label = ctk.CTkLabel(self, text="Cím 1", font=("Verdana", 18))
         self.first_address_label.grid(row =3, column =0, padx =20, pady=10, sticky="w")
-        self.first_address_entry = ctk.CTkEntry(self, placeholder_text="Hétköznap")
+        self.first_address_entry = ctk.CTkEntry(self, placeholder_text="Hétköznap (#2 esti címekre)")
         self.first_address_entry.grid(row =4, column =0, padx=20, sticky="ew")
 
         # Cim 2 input
-        self.second_address_label = ctk.CTkLabel(self, text="Cím 2", font=("Arial", 18))
+        self.second_address_label = ctk.CTkLabel(self, text="Cím 2", font=("Verdana", 18))
         self.second_address_label.grid(row =3, column =1, padx =20, pady=10, sticky="w")
         self.second_address_entry = ctk.CTkEntry(self, placeholder_text="Hétvége")
         self.second_address_entry.grid(row =4, column =1, padx=20, sticky="ew")
 
         # Elofizetes kezdete input
-        self.calendar_label = ctk.CTkLabel(self, text="Előfizetés kezdete", font=("Arial", 18))
+        self.calendar_label = ctk.CTkLabel(self, text="Előfizetés kezdete", font=("Verdana", 18))
         self.calendar_label.grid(row =5, column =0, padx =20, pady=10, sticky="w")
-        self.date_picker = DateEntry(self, date_pattern='yyyy-mm-dd', font=("Arial",14))
+        self.date_picker = DateEntry(self, date_pattern='yyyy-mm-dd', font=("Verdana",14))
         self.date_picker.grid(row =6, column=0, padx=25, pady=10, sticky="ew")
 
         # Idotartam input
-        self.duration_label = ctk.CTkLabel(self, text="Előfizetés időtartama", font=("Arial", 18))
+        self.duration_label = ctk.CTkLabel(self, text="Előfizetés időtartama", font=("Verdana", 18))
         self.duration_label.grid(row =5, column =1, padx =20, pady=10, sticky="w")
         self.duration_entry = ctk.CTkEntry(self, placeholder_text="Napok száma")
         self.duration_entry.grid(row =6, column = 1, padx=20, sticky="ew")
 
         # Hetvege input
-        self.weekend_checkbox_label = ctk.CTkLabel(self, text="Hétvégi étkezés", font=("Arial", 18))
+        self.weekend_checkbox_label = ctk.CTkLabel(self, text="Hétvégi étkezés", font=("Verdana", 18))
         self.weekend_checkbox_label.grid(row =5, column =2, padx =20, pady=10, sticky="w")
         self.weekend_var = tk.BooleanVar()
         self.weekend_checkbox = ctk.CTkCheckBox(self, text="", variable=self.weekend_var)
@@ -90,20 +90,20 @@ class AddPage(ctk.CTkFrame):
         
         
         # Meret input
-        self.size_label = ctk.CTkLabel(self, text="Méret", font=("Arial", 18))
+        self.size_label = ctk.CTkLabel(self, text="Méret", font=("Verdana", 18))
         self.size_label.grid(row =7, column =0, padx =20, pady=10, sticky="w")
         self.size_combobox = ctk.CTkComboBox(self, values=["S", "M", "L", "XL"], state="readonly")
         self.size_combobox.grid(row=8, column=0, padx=20, pady=(0,10), sticky="ew")
         self.size_combobox.set("")
 
         # Price/day input
-        self.price_label = ctk.CTkLabel(self, text="Ár/nap", font=("Arial", 18))
+        self.price_label = ctk.CTkLabel(self, text="Ár/nap", font=("Verdana", 18))
         self.price_label.grid(row=9, column=0, padx=20, sticky="w")
         self.price_entry = ctk.CTkEntry(self, placeholder_text="€")
         self.price_entry.grid(row =10, column =0, padx=20, sticky="ew")
         
         # Tipus inputok
-        self.type_label = ctk.CTkLabel(self, text="Típus", font=("Arial", 18))
+        self.type_label = ctk.CTkLabel(self, text="Típus", font=("Verdana", 18))
         self.type_label.grid(row=7, column=1, padx=20, sticky="w")
         idx = 8
         self.meals = ["Reggeli", "Ebéd", "Snack", "Vacsora"]
@@ -120,7 +120,7 @@ class AddPage(ctk.CTkFrame):
         
 
         # Mentes gomb
-        self.save_label = ctk.CTkButton(self,text="Mentés", command=self.error_handling)
+        self.save_label = ctk.CTkButton(self,text="Mentés", font=("Verdana", 12), command=self.error_handling)
         self.save_label.grid(row=12, column=0, padx=20, pady=(40,0), sticky="ew")
 
     # Input hiba kezeles popup windowokkal
@@ -198,7 +198,7 @@ class AddPage(ctk.CTkFrame):
             add_customer(self.data)
             if self.updated_label:
                 self.updated_label.destroy()
-            self.updated_label = ctk.CTkLabel(self, text="Sikeresen hozzáadva", font=("Arial", 14, "bold"), text_color="green")
+            self.updated_label = ctk.CTkLabel(self, text="Hozzáadva", font=("Verdana", 14, "bold"), text_color="green")
             self.updated_label.grid(row =13, column=0, padx=20, pady=10, sticky="w")
             self.after(10000, self.updated_label.destroy)
 

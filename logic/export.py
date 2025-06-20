@@ -103,7 +103,7 @@ def export_delivery(date_str):
 
     # 9. Row height tweak
     for row_idx in range(3, ws.max_row + 1):
-        ws.row_dimensions[row_idx].height = 25
+        ws.row_dimensions[row_idx].height = 30
 
     # 10. Column widths (fit A4 width approx)
     ws.column_dimensions["A"].width = 18  # Name

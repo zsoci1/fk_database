@@ -24,18 +24,18 @@ class ActivateSubs(ctk.CTkToplevel):
     
     # Create labels and entries
     def user_input(self):
-        self.start_date_label = ctk.CTkLabel(self, text="Kezdés", font=("Arial", 18))
+        self.start_date_label = ctk.CTkLabel(self, text="Kezdés", font=("Verdana", 18))
         self.start_date_label.grid(row=0, column=0, padx=20, pady=10, sticky="w")
-        self.start_date = DateEntry(self, date_pattern='yyyy-mm-dd', width =13, font=("Arial",14))
+        self.start_date = DateEntry(self, date_pattern='yyyy-mm-dd', width =13, font=("Verdana",14))
         self.start_date.grid(row=0, column=1, padx=0, pady=10, sticky="w")
 
-        self.duration_label = ctk.CTkLabel(self, text="Időtartam", font=("Arial", 18))
+        self.duration_label = ctk.CTkLabel(self, text="Időtartam", font=("Verdana", 18))
         self.duration_label.grid(row=1, column=0, padx=20, pady=10, sticky="w")
         self.duration = ctk.CTkEntry(self)
         self.duration.grid(row=1, column=1, padx=0, pady=10, sticky="w")
 
-        self.save_btn = ctk.CTkButton(self, text="Mentés", command=self.error_handling)
-        self.save_btn.grid(row=3, column=1, padx=20, pady=10)
+        self.save_btn = ctk.CTkButton(self, text="Mentés",font=("Verdana",10), command=self.error_handling)
+        self.save_btn.grid(row=3, column=0, padx=20, pady=10)
 
     # Center the TopLevel
     def center_window(self):
@@ -67,15 +67,15 @@ class ActivateSubs(ctk.CTkToplevel):
                 self.empty_error.destroy()
             if self.notdigit_error:
                 self.notdigit_error.destroy()
-            self.empty_error = ctk.CTkLabel(self, text="Az Időtartam mező nem lehet üres.", font=("Arial", 14), text_color="red")
-            self.empty_error.grid(row=2, column=1, padx=0, sticky="w")
+            self.empty_error = ctk.CTkLabel(self, text="Az Időtartam mező\nnem lehet üres.", font=("Verdana", 14), text_color="red")
+            self.empty_error.grid(row=3, column=1, padx=0, sticky="w")
         elif self.duration.get().strip().isdigit() == False or int(self.duration.get().strip()) <= 0:
             if self.empty_error:
                 self.empty_error.destroy()
             if self.notdigit_error:
                 self.notdigit_error.destroy()
-            self.notdigit_error = ctk.CTkLabel(self, text="Az Időtartam mezőnek\negy 0-tól nagyobb számnak kell lennie.", font=("Arial", 14), text_color="red")
-            self.notdigit_error.grid(row=2, column=1, padx=0, sticky="w")
+            self.notdigit_error = ctk.CTkLabel(self, text="Az Időtartam mezőnek\negy 0-tól nagyobb\nszámnak kell lennie.", font=("Verdana", 14), text_color="red")
+            self.notdigit_error.grid(row=3, column=1, padx=0, sticky="w")
         # If no error happened
         else:
             if self.notdigit_error:

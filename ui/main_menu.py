@@ -33,7 +33,7 @@ class MainMenu(ctk.CTk):
         self.master.title("FitKitchen Manager")
         self.master.geometry("1000x700")
         self.master.resizable(True, True)
-        self.master.minsize(1000, 700)
+        self.master.minsize(1000, 600)
         self.master.grid_rowconfigure(0, weight=1)
         self.master.grid_columnconfigure(1, weight =1)
 
@@ -62,7 +62,7 @@ class MainMenu(ctk.CTk):
         self.sidebar_frame.grid(row = 0, column = 0, padx = 20, pady = 20, sticky = "ns")
 
         # Main label in sidebar_frame
-        self.main_label = ctk.CTkLabel(self.sidebar_frame, text="FK Manager", font=("Arial", 32, "bold"))
+        self.main_label = ctk.CTkLabel(self.sidebar_frame, text="FK Manager", font=("Verdana", 32, "bold"))
         self.main_label.grid(row = 0, column = 0, padx = 20, pady = 30)
 
         # Right side content
@@ -74,16 +74,16 @@ class MainMenu(ctk.CTk):
     # Creating buttons in sidebar_frame
     def create_buttons(self):   
 
-        self.export_btn = ctk.CTkButton(self.sidebar_frame, text = "Exportálás", font=("Arial", 26, "bold" ), command=lambda:self.show_page(ExportPage))
+        self.export_btn = ctk.CTkButton(self.sidebar_frame, text = "Exportálás", font=("Verdana", 22, "bold" ), command=lambda:self.show_page(ExportPage))
         self.export_btn.grid(row =1, column = 0, padx = 20, pady = 30)
 
-        self.add_clients_btn = ctk.CTkButton(self.sidebar_frame, text = "Hozzáadás", font=("Arial", 26, "bold" ), command=lambda:self.show_page(AddPage))
+        self.add_clients_btn = ctk.CTkButton(self.sidebar_frame, text = "Hozzáadás", font=("Verdana", 22, "bold" ), command=lambda:self.show_page(AddPage))
         self.add_clients_btn.grid(row =2, column = 0, padx = 20, pady = 30)
 
-        self.edit_meals_btn = ctk.CTkButton(self.sidebar_frame, text = "Módosítás", font=("Arial", 26, "bold" ), command=lambda:self.show_page(ModPage))
+        self.edit_meals_btn = ctk.CTkButton(self.sidebar_frame, text = "Módosítás", font=("Verdana", 22, "bold" ), command=lambda:self.show_page(ModPage))
         self.edit_meals_btn.grid(row =3, column = 0, padx = 20, pady = 30)
 
-        self.exit_btn = ctk.CTkButton(self.sidebar_frame, text = "Kilépés", font=("Arial", 26, "bold" ), command=self.master.destroy)
+        self.exit_btn = ctk.CTkButton(self.sidebar_frame, text = "Kilépés", font=("Verdana", 22, "bold" ), command=self.master.destroy)
         self.exit_btn.grid(row =4, column = 0, padx = 20, pady = 30)
 
     def show_page(self, page_name):

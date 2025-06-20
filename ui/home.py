@@ -10,5 +10,5 @@ class BreakdownPage(ctk.CTkFrame):
     def setup_frame(self):
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weigh=1)
-        self.label = ctk.CTkLabel(self, text="Kimutatás", font=("Arial", 30, "bold"))
+        self.label = ctk.CTkLabel(self, text="Kimutatás", font=("Verdana", 30, "bold"))
         self.label.grid(row = 0, column = 0, padx =20, pady =30, sticky="nw")
