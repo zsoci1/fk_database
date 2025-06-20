@@ -188,7 +188,11 @@ def update_meal_type(customer_id, date, new_value):
     cursor.execute('''
                    UPDATE meals
                    SET type_special = ?
+                   WHERE id = (
+                   SELECT id FROM meals
                    WHERE customer_id = ? AND date = ?
+                   ORDER BY id ASC
+                   LIMIT 1)
                    ''', (new_value, customer_id, date))
     conn.commit()
     conn.close()
@@ -419,7 +423,6 @@ def extend_subscription(customer_id, extra_days):
 # leallitja az elofizetest erre az intervallumra es a leallitott napok szamaval meghosszabitja az elofizetest
 def pause_subscription(customer_id, pause_start, pause_end):
 
-
     pause_dates = []
     current = datetime.strptime(pause_start, "%Y-%m-%d")
     end = datetime.strptime(pause_end, "%Y-%m-%d")
@@ -504,4 +507,4 @@ def DELETE_ALL():
     conn.close()
 
 # DELETE_ALL()
-# TEST_PRINT()
+TEST_PRINT()
