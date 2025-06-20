@@ -200,37 +200,53 @@ def update_customer_defaults(customer_id, data):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
+    # 1. Get old values
     cursor.execute('''
-                   UPDATE customers
-                   SET name = ?, address1 = ?, address2 = ?, phone = ?, weekend_meal = ?,
-                        default_size = ?, default_type_special = ?, price_day = ? 
-                   WHERE id = ?
-                   ''', (         
-                       data["name"],
-                       data.get("address1", ""),
-                       data.get("address2", ""),
-                       data.get("phone", ""),
-                       data["weekend_meal"],
-                       data["default_size"],
-                       data.get("default_type_special", ""),
-                       data["price_day"],
-                       customer_id
-                   ))
-    
-    today = datetime.today().strftime("%Y-%m-%d")
+        SELECT weekend_meal, end_date
+        FROM customers
+        WHERE id = ?
+    ''', (customer_id,))
+    old_weekend_meal, end_date_str = cursor.fetchone()
 
+    # 2. Update customer table
     cursor.execute('''
-                   UPDATE meals
-                   SET size = ?, type_special = ?, price_day = ?
-                   WHERE customer_id = ?
-                   AND date >= ?
-                   ''', (
-                       data["default_size"],
-                       data["default_type_special"],
-                       data["price_day"],
-                       customer_id,
-                       today
-                   ))
+        UPDATE customers
+        SET name = ?, address1 = ?, address2 = ?, phone = ?, weekend_meal = ?,
+            default_size = ?, default_type_special = ?, price_day = ? 
+        WHERE id = ?
+    ''', (
+        data["name"],
+        data.get("address1", ""),
+        data.get("address2", ""),
+        data.get("phone", ""),
+        data["weekend_meal"],
+        data["default_size"],
+        data.get("default_type_special", ""),
+        data["price_day"],
+        customer_id
+    ))
+
+    # 3. From today forward: delete all meals and regenerate
+    today = datetime.today().strftime("%Y-%m-%d")
+    cursor.execute('''
+        DELETE FROM meals
+        WHERE customer_id = ?
+        AND date >= ?
+    ''', (customer_id, today))
+
+    # 4. Generate updated meal rows
+    meal_days = generate_meal_days(today, end_date_str, data["weekend_meal"])
+    for day in meal_days:
+        cursor.execute('''
+            INSERT INTO meals (customer_id, date, size, type_special, price_day)
+            VALUES (?, ?, ?, ?, ?)
+        ''', (
+            customer_id,
+            day["date"],
+            data["default_size"],
+            data["default_type_special"],
+            data["price_day"]
+        ))
 
     conn.commit()
     conn.close()
@@ -486,3 +502,6 @@ def DELETE_ALL():
     cursor.execute('''DELETE FROM meals''')
     conn.commit()
     conn.close()
+
+# DELETE_ALL()
+TEST_PRINT()
