@@ -504,4 +504,4 @@ def DELETE_ALL():
     conn.close()
 
 # DELETE_ALL()
-TEST_PRINT()
+# TEST_PRINT()

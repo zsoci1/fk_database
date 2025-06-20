@@ -62,7 +62,7 @@ def export_delivery(date_str):
     title_cell.alignment = Alignment(horizontal="center", vertical="center")
 
     # 5. Header row
-    headers = ["Név", "Méret", "Étekezés", "Cím", "Tel.", "Megjegyzés"]
+    headers = ["Név", "Méret", "Étkezés", "Cím", "Tel.", "Megjegyzés"]
     ws.append(headers)
     header_font = Font(name="Calibri", size=12, bold=True)
     for col_num, header in enumerate(headers, 1):
@@ -239,4 +239,3 @@ def export_kitchen(date_str):
     filename = f"exports/kitchen_{date_str}.xlsx"
     wb.save(filename)
     print(f"[✓] Kitchen export completed → {filename}")
-
