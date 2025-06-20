@@ -3,11 +3,12 @@ from tkcalendar import DateEntry
 from database.db import activate_subscription
 
 class ActivateSubs(ctk.CTkToplevel):
-    def __init__(self, parent, id, weekend):
+    def __init__(self, parent, id, weekend, mod_page):
         super().__init__(parent)
         self.id = id
         self.weekend = weekend
         self.parent = parent
+        self.mod_page = mod_page
 
         self.empty_error = None
         self.notdigit_error = None
@@ -35,7 +36,7 @@ class ActivateSubs(ctk.CTkToplevel):
         self.duration.grid(row=1, column=1, padx=0, pady=10, sticky="w")
 
         self.save_btn = ctk.CTkButton(self, text="Mentés",font=("Verdana",10), command=self.error_handling)
-        self.save_btn.grid(row=3, column=0, padx=20, pady=10)
+        self.save_btn.grid(row=3, column=0, padx=20, pady=30)
 
     # Center the TopLevel
     def center_window(self):
@@ -86,4 +87,5 @@ class ActivateSubs(ctk.CTkToplevel):
             activate_subscription(self.id, self.start_date.get().strip(), self.duration.get().strip(), self.weekend)
             # Update subscription labels
             self.parent.show_subscription()
+            self.mod_page.refresh_page()
             self.destroy()

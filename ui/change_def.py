@@ -133,19 +133,19 @@ class ChangeDef(ctk.CTkScrollableFrame):
 
         # Extend by value
         self.extend_sub_label = ctk.CTkLabel(self, text="Meghosszabbítás", font=("Verdana", 16))
-        self.extend_sub_label.grid(row=19, column=0, padx=(20,0), sticky="w")
+        self.extend_sub_label.grid(row=19, column=0, padx=(20,0), pady=10, sticky="w")
         self.extend_sub_entry = ctk.CTkEntry(self, width=50)
         self.extend_sub_entry.grid(row=19,column=0, padx=(170,0), sticky="w")
         self.extend_sub_label_2 = ctk.CTkLabel(self, text="nappal", font=("Verdana", 16))
         self.extend_sub_label_2.grid(row=19, column=0, padx=(230,0), sticky="w")
 
         # Stop subscription label
-        self.stop_label = ctk.CTkLabel(self, text="Leállítás", font=("Verdana", 16))
+        self.stop_label = ctk.CTkLabel(self, text="Leállítás kezdete és vége", font=("Verdana", 16))
         self.stop_label.grid(row=20, column=0, padx=20, sticky="w")
 
         # Stop subscription start date entry
         self.pause_start = DateEntry(self, date_pattern='yyyy-mm-dd', width = 13, font=("Verdana",14))
-        self.pause_start.grid(row =21, column=0, pady=10,padx=20, sticky="w")
+        self.pause_start.grid(row =21, column=0, pady=10,padx=25, sticky="w")
         self.pause_start.delete(0, 'end')
 
         # Stop subscription end date entry
@@ -260,6 +260,7 @@ class ChangeDef(ctk.CTkScrollableFrame):
     # Error handling for inputs
     def error_handling(self):
         # Checking entry dates
+        self.today = date.today().isoformat()
         if self.pause_start.get() != "" and self.pause_end.get() != "":
             # Converting them 
             start_date_str = self.pause_start.get()
@@ -280,6 +281,8 @@ class ChangeDef(ctk.CTkScrollableFrame):
             CustomMessageBox(title='Hiba', text='Az Előfizetés meghosszabbítása mezőnek egy számnak kell lennie.')
         elif self.pause_start.get() != "" and self.pause_end.get() != "" and start_date > end_date:
             CustomMessageBox(title='Hiba', text='A leállítás vége nem lehet hamarabb mint a leállítás kezdete.')
+        elif self.pause_start.get() != "" and self.pause_end.get() != "" and start_date_str < self.today:
+            CustomMessageBox(title='Hiba', text='A leállítás kezdete dátum nem lehet a múltban.')
         else:
             for var in (self.checkbox_vars):
                 checkbox_value = var.get()
@@ -336,7 +339,7 @@ class ChangeDef(ctk.CTkScrollableFrame):
                 self.updated_label.destroy()
             self.updated_label = ctk.CTkLabel(self, text="Mentve", font=("Verdana", 12, "bold"), text_color="green")
             self.updated_label.grid(row =24, column=1, padx=20, pady=(0,60),sticky="w")
-            self.after(10000, self.updated_label.destroy)
+            self.after(5000, self.updated_label.destroy)
             self.show_subscription()
 
     # Show subscription info
@@ -378,7 +381,7 @@ class ChangeDef(ctk.CTkScrollableFrame):
     # Show subscription buttons
     def subscription_buttons(self):
         if self.pause_subscription is None:
-            self.pause_subscription = ctk.CTkButton(self, text="Előfizetés leállítása\n(mai naptól)",font=("Verdana", 16), command=self.stop_subs)
+            self.pause_subscription = ctk.CTkButton(self, text="Előfizetés leállítása\n(mai naptól)",font=("Verdana", 16), width=200, command=self.stop_subs)
             self.pause_subscription.grid(row=22, column=0, padx=20, pady=10, sticky="w")
 
         if self.start_subscription is None:
@@ -389,6 +392,12 @@ class ChangeDef(ctk.CTkScrollableFrame):
     def stop_subs(self):
         stop_subscription(self.chosen_id)
         self.show_subscription()
+        self.mod_page.refresh_page()
+        if self.updated_label:
+            self.updated_label.destroy()
+        self.updated_label = ctk.CTkLabel(self, text="Mentve", font=("Verdana", 12, "bold"), text_color="green")
+        self.updated_label.grid(row =24, column=1, padx=20, pady=(0,60),sticky="w")
+        self.after(5000, self.updated_label.destroy)
 
     # Create TopLevel for activate subscription
     def activate_subscription(self):
@@ -400,7 +409,7 @@ class ChangeDef(ctk.CTkScrollableFrame):
         else:
             # if customer is not active
             if not hasattr(self, "activate_window") or not self.activate_window.winfo_exists():
-                self.activate_window = ActivateSubs(self,self.chosen_id, self.weekend_checkbox.get())
+                self.activate_window = ActivateSubs(self,self.chosen_id, self.weekend_checkbox.get(),self.mod_page)
             else:
                 self.activate_window.focus()
 
