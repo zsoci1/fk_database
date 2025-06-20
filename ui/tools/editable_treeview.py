@@ -13,15 +13,19 @@ class EditableTreeView(ttk.Treeview):
         style = ttk.Style()
         style.theme_use("clam")
         style.configure("Treeview.Heading",
-                font=("Verdana", 10, "bold"),
+                font=("Verdana", 14, "bold"),
                 background="#e1e1e1",
                 foreground="#333",
                 relief="flat")
         style.map("Treeview", background=[('selected', '#007acc')], foreground=[('selected', 'white')])
+        style.configure("Treeview", font=("Verdana", 12))
 
         self.heading("datum", text="Dátum", anchor="w")
         self.heading("meret", text="Méret", anchor="center")
         self.heading("tipus", text="Típus", anchor="w")
+
+        self.column("meret", anchor="center")
+
 
         # Először beszúrjuk az adatokat
         napok = ["Hét", "Kedd", "Sze", "Csüt", "Pén", "Szo", "Vas"]
@@ -44,8 +48,8 @@ class EditableTreeView(ttk.Treeview):
         self.editing_entry = None
 
     def adjust_column_widths(self):
-        font = ("Verdana", 10)
-        padding = 15
+        font = ("Verdana", 12)
+        padding = 25
 
         columns = self["columns"]
         for idx, col in enumerate(columns):
@@ -81,7 +85,7 @@ class EditableTreeView(ttk.Treeview):
         if self.editing_entry:
             self.editing_entry.destroy()
 
-        self.editing_entry = tk.Entry(self, font=("Verdana", 10), relief="solid", borderwidth=1)
+        self.editing_entry = tk.Entry(self, font=("Verdana", 11), relief="solid", borderwidth=1)
         self.editing_entry.place(x=x, y=y, width=width, height=height)
         self.editing_entry.insert(0, value)
         self.editing_entry.focus_set()
