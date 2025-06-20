@@ -49,7 +49,7 @@ class EditableTreeView(ttk.Treeview):
 
     def adjust_column_widths(self):
         font = ("Verdana", 12)
-        padding = 25
+        padding = 27
 
         columns = self["columns"]
         for idx, col in enumerate(columns):
