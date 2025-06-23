@@ -119,7 +119,6 @@ class ModPage(ctk.CTkFrame):
         date = get_current_week_range()
         id = self.chosen_id
         meal_for_week = get_meals_for_week(id,date[0], date[1])
-        print(meal_for_week)
 
         # If treeview exists, destroy it
         if hasattr(self, "editable_treeview"):
