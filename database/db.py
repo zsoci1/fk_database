@@ -399,7 +399,7 @@ def extend_subscription(customer_id, extra_days):
     cursor = conn.cursor()
 
     cursor.execute('''
-                   SELECT end_date, duration, default_size, default_type_special, weekend_meal, price_day
+                   SELECT end_date, duration, default_size, default_type_special, weekend_meal
                    FROM customers
                    WHERE id = ?
                    ''', (customer_id,))
@@ -409,7 +409,7 @@ def extend_subscription(customer_id, extra_days):
         conn.close()
         return
     
-    end_date, duration, size, type_special, weekend_meal, price_day = row
+    end_date, duration, size, type_special, weekend_meal = row
 
     next_day = (datetime.strptime(end_date, "%Y-%m-%d") + timedelta(days=1)).strftime("%Y-%m-%d")
     new_end_date = calc_end_date(next_day, extra_days, weekend_meal)
@@ -421,12 +421,12 @@ def extend_subscription(customer_id, extra_days):
                    WHERE id = ?
                    ''', (new_duration, new_end_date, customer_id))
     
-    new_meal_days = generate_meal_days(next_day, new_end_date, weekend_meal)
+    new_meal_days = generate_meal_days(next_day, new_duration, weekend_meal)
     for meal in new_meal_days: 
         cursor.execute('''
-                       INSERT INTO meals (customer_id, date, size, type_special, price_day)
-                       VALUES (?, ?, ?, ?, ?)
-                       ''', (customer_id, meal["date"], size, type_special, price_day))
+                       INSERT INTO meals (customer_id, date, size, type_special)
+                       VALUES (?, ?, ?, ?)
+                       ''', (customer_id, meal["date"], size, type_special))
         
     conn.commit()
     conn.close()
