@@ -229,7 +229,7 @@ def update_customer_defaults(customer_id, data):
     cursor.execute('''
         UPDATE customers
         SET name = ?, address1 = ?, address2 = ?, phone = ?, weekend_meal = ?,
-            default_size = ?, default_type_special = ?, price_day = ? 
+            default_size = ?, default_type_special = ?
         WHERE id = ?
     ''', (
         data["name"],
@@ -239,7 +239,6 @@ def update_customer_defaults(customer_id, data):
         data["weekend_meal"],
         data["default_size"],
         data.get("default_type_special", ""),
-        data["price_day"],
         customer_id
     ))
 
@@ -254,14 +253,13 @@ def update_customer_defaults(customer_id, data):
         if day["date"] in paused_dates:
             continue
         cursor.execute('''
-            INSERT INTO meals (customer_id, date, size, type_special, price_day)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO meals (customer_id, date, size, type_special)
+            VALUES (?, ?, ?, ?)
         ''', (
             customer_id,
             day["date"],
             data["default_size"],
-            data["default_type_special"],
-            data["price_day"]
+            data["default_type_special"]
         ))
 
     conn.commit()
