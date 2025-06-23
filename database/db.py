@@ -455,7 +455,7 @@ def pause_subscription(customer_id, pause_start, pause_end):
                        ''', [(customer_id, date) for date in pause_dates])
     
     cursor.execute('''
-                   SELECT end_date, default_size, default_type_special, weekend_meal, price_day
+                   SELECT end_date, duration, default_size, default_type_special, weekend_meal
                    FROM customers
                    WHERE id = ?
                    ''', (customer_id,))
@@ -465,7 +465,7 @@ def pause_subscription(customer_id, pause_start, pause_end):
         conn.close()
         return
     
-    end_date_str, size, type_special, weekend_meal, price_day = row
+    end_date_str, duration, size, type_special, weekend_meal = row
     end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
 
     skipped_count = len(pause_dates)
@@ -484,13 +484,13 @@ def pause_subscription(customer_id, pause_start, pause_end):
                    WHERE id = ?
                    ''', (new_end_date.strftime("%Y-%m-%d"), customer_id))
     
-    meal_replacements = generate_meal_days(end_date_str, new_end_date.strftime("%Y-%m-%d"), weekend_meal)
+    meal_replacements = generate_meal_days(end_date_str, duration, weekend_meal)
 
     for meal in meal_replacements[1:]:
         cursor.execute('''
-                       INSERT INTO meals (customer_id, date, size, type_special, price_day)
-                       VALUES (?, ?, ?, ?, ?)
-                       ''', (customer_id, meal["date"], size, type_special, price_day))
+                       INSERT INTO meals (customer_id, date, size, type_special)
+                       VALUES (?, ?, ?, ?)
+                       ''', (customer_id, meal["date"], size, type_special))
 
     conn.commit()
     conn.close()
