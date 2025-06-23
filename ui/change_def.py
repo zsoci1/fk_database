@@ -84,12 +84,6 @@ class ChangeDef(ctk.CTkScrollableFrame):
         self.size_combobox = ctk.CTkComboBox(self, values=["S", "M", "L", "XL"], state="readonly")
         self.size_combobox.grid(row=8, column=0, padx=20, pady=(0,10), sticky="ew")
 
-        # Price/day input
-        self.price_label = ctk.CTkLabel(self, text="Ár/nap", font=("Verdana", 16))
-        self.price_label.grid(row=9, column=0, padx=20, sticky="w")
-        self.price_entry = ctk.CTkEntry(self)
-        self.price_entry.grid(row =10, column =0, padx=20, sticky="ew")
-        
         # Type / Type Special inputs
         self.type_label = ctk.CTkLabel(self, text="Típus", font=("Verdana", 16))
         self.type_label.grid(row=7, column=1, padx=20, sticky="w")
@@ -123,10 +117,6 @@ class ChangeDef(ctk.CTkScrollableFrame):
         # Remaining days
         self.days_left_label = ctk.CTkLabel(self, text="Hátralévő napok: ", font=("Verdana", 16))
         self.days_left_label.grid(row=16, column=0, padx=(20,0), sticky="w")
-
-        # Total sum
-        self.total_sum_label = ctk.CTkLabel(self, text="Teljes összeg: ", font=("Verdana", 16))
-        self.total_sum_label.grid(row=17, column=0, padx=(20,0), sticky="w")
 
         # SUBSCRIPTION ENTRIES AND LABELS
 
@@ -208,9 +198,6 @@ class ChangeDef(ctk.CTkScrollableFrame):
 
         self.size_combobox.set(self.user_data["default_size"])
 
-        self.price_entry.delete(0, "end")
-        self.price_entry.insert(0, self.user_data["price_day"])
-
         parsed = self.parse_default_type_special(self.user_data['default_type_special'])
 
         for i, meal in enumerate(self.meals):  
@@ -273,10 +260,6 @@ class ChangeDef(ctk.CTkScrollableFrame):
             CustomMessageBox(title='Hiba', text='A Név mező nem lehet üres.')
         elif self.size_combobox.get().strip() == "":
             CustomMessageBox(title='Hiba', text='A Méret mező nem lehet üres.')
-        elif self.price_entry.get().strip() =="":
-             CustomMessageBox(title='Hiba', text='Az Ár/nap mező nem lehet üres.')
-        elif self.price_entry.get().strip().isdigit() == False:
-            CustomMessageBox(title='Hiba', text='Az Ár/napnak egy számnak kell lennie.')
         elif self.extend_sub_entry.get().strip() != "" and self.extend_sub_entry.get().strip().isdigit() == False:
             CustomMessageBox(title='Hiba', text='Az Előfizetés meghosszabbítása mezőnek egy számnak kell lennie.')
         elif self.pause_start.get() != "" and self.pause_end.get() != "" and start_date > end_date:
@@ -312,7 +295,6 @@ class ChangeDef(ctk.CTkScrollableFrame):
             self.user_data["address2"] = self.second_address_entry.get()
             self.user_data["weekend_meal"] = self.weekend_checkbox.get()
             self.user_data["default_size"] = self.size_combobox.get()
-            self.user_data["price_day"] = self.price_entry.get()
 
             special_data = []
             for meal, var, entry in zip(self.meal_data, self.checkbox_vars, self.special_entries):
@@ -369,12 +351,6 @@ class ChangeDef(ctk.CTkScrollableFrame):
             self.days_left.grid(row=16, column=0,padx=(180,0), sticky="w")
         else:
             self.days_left.configure(text=self.data["remaining_days"])
-
-        if self.total_sum is None:
-            self.total_sum = ctk.CTkLabel(self, text=f"{self.data["total_income"]}€", font=("Verdana", 16, "bold"))
-            self.total_sum.grid(row=17, column=0, padx=(180,0), sticky="w")
-        else:
-            self.total_sum.configure(text=f"{self.data["total_income"]}€")
 
         self.subscription_buttons()
 

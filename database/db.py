@@ -48,7 +48,7 @@ def add_customer(data):
     weekend_meal = data["weekend_meal"]
     default_size = data["default_size"]
     default_type_special = data.get("default_type_special", "")
-    price_day = int(data.get("price_day", 0))
+    #price_day = int(data.get("price_day", 0))
 
 
     end_date = calc_end_date(start_date, duration, weekend_meal_enabled=weekend_meal)
@@ -59,12 +59,12 @@ def add_customer(data):
     cursor.execute('''
                    INSERT INTO customers (
                         name, address1, address2, phone, start_date, duration, end_date,
-                        default_size, default_type_special, weekend_meal, price_day
+                        default_size, default_type_special, weekend_meal
                    )
-                   VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                   VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                    ''', (
                        name, address1, address2, phone, start_date, duration, end_date,
-                       default_size, default_type_special, weekend_meal, price_day
+                       default_size, default_type_special, weekend_meal
                    ))
     
     customer_id = cursor.lastrowid # stores the id of the last inserted row
@@ -76,9 +76,9 @@ def add_customer(data):
         meal_date = meal_info["date"]
 
         cursor.execute('''
-                       INSERT INTO meals (customer_id, date, size, type_special, price_day)
-                       VALUES (?, ?, ?, ?, ?)
-                       ''', (customer_id, meal_date, default_size, default_type_special, price_day))
+                       INSERT INTO meals (customer_id, date, size, type_special)
+                       VALUES (?, ?, ?, ?)
+                       ''', (customer_id, meal_date, default_size, default_type_special))
 
 
     conn.commit()

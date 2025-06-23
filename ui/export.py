@@ -40,7 +40,7 @@ class ExportPage(ctk.CTkFrame):
         self.all_export_btn = ctk.CTkButton(self,font=("Verdana", 12), text="Minden EXPORT", command=self.exp_all)
         self.all_export_btn.grid(row=5, column=0, padx=20, pady=10, sticky="w")
 
-        self.location_label = ctk.CTkLabel(self,font=("Verdana", 10),text=f"Mentés helye: ...\\exports\\{self.date_picker.get().strip()}.xlsx")
+        self.location_label = ctk.CTkLabel(self,font=("Verdana", 12),text=f"Mentés helye: ...\\exports\\{self.date_picker.get().strip()}.xlsx")
         self.location_label.grid(row=6,column=0, padx=20, pady=10, sticky="w")
     
     def exp_del(self):
@@ -69,8 +69,8 @@ class ExportPage(ctk.CTkFrame):
     
     def update_location_label(self):
         self.location_label.destroy()
-        self.location_label = ctk.CTkLabel(self, text=f"Mentés helye: ...\\exports\\{self.date_picker.get().strip()}.xlsx")
-        self.location_label.grid(row=6, column=0, padx=20, pady=10, sticky="w")
+        self.location_label = ctk.CTkLabel(self,font=("Verdana", 12),text=f"Mentés helye: ...\\exports\\{self.date_picker.get().strip()}.xlsx")
+        self.location_label.grid(row=6,column=0, padx=20, pady=10, sticky="w")
 
 
 
