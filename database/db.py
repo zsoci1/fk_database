@@ -219,7 +219,7 @@ def update_customer_defaults(customer_id, data):
     existing_dates = set(row[0] for row in cursor.fetchall())
 
     # 3. Generate full list of required meal days
-    all_days = generate_meal_days(today, end_date_str, data["weekend_meal"])
+    all_days = generate_meal_days(today, data["duration"], data["weekend_meal"])
     all_dates = set(day["date"] for day in all_days)
 
     # 4. Determine paused/skipped dates

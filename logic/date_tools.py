@@ -82,5 +82,3 @@ def get_current_week_range():
     end_srt = thursday.strftime("%Y-%m-%d")  # csutortok
 
     return (start_str, end_srt)
-
-
