@@ -200,15 +200,19 @@ def update_customer_defaults(customer_id, data):
 
     # 1. Get old values and end_date
     cursor.execute('''
-        SELECT end_date
+        SELECT end_date, duration
         FROM customers
         WHERE id = ?
     ''', (customer_id,))
+
     row = cursor.fetchone()
+    
     if not row:
         conn.close()
         return
+    
     end_date_str = row[0]
+    duration = row[1]
 
     # 2. Get all existing meal dates for customer from today to end_date
     today = datetime.today().strftime("%Y-%m-%d")
@@ -219,7 +223,7 @@ def update_customer_defaults(customer_id, data):
     existing_dates = set(row[0] for row in cursor.fetchall())
 
     # 3. Generate full list of required meal days
-    all_days = generate_meal_days(today, data["duration"], data["weekend_meal"])
+    all_days = generate_meal_days(today, duration, data["weekend_meal"])
     all_dates = set(day["date"] for day in all_days)
 
     # 4. Determine paused/skipped dates
