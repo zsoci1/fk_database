@@ -524,6 +524,4 @@ def DELETE_ALL():
     conn.commit()
     conn.close()
 
-# DELETE_ALL()
-# TEST_PRINT()
-
+SQLite_BACKUP()
