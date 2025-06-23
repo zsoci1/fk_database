@@ -39,8 +39,8 @@ def SQLite_BACKUP():
 # megkap egy "data" dictionary-t a UI-bol es elmenti az adatbazisba
 def add_customer(data):
 
-    name = data["name"] # returns the value of the name key if exists else error
-    address1 = data.get("address1", "") # returns the value but no error if doens't exist
+    name = data["name"] 
+    address1 = data.get("address1", "") 
     address2 = data.get("address2", "")
     phone = data.get("phone", "")
     start_date = data["start_date"]
@@ -48,13 +48,13 @@ def add_customer(data):
     weekend_meal = data["weekend_meal"]
     default_size = data["default_size"]
     default_type_special = data.get("default_type_special", "")
-    #price_day = int(data.get("price_day", 0))
+    #
 
 
     end_date = calc_end_date(start_date, duration, weekend_meal_enabled=weekend_meal)
 
-    conn = sqlite3.connect(DB_PATH) # establishing connection to DB
-    cursor = conn.cursor() # middleman for executing queries
+    conn = sqlite3.connect(DB_PATH) 
+    cursor = conn.cursor() 
 
     cursor.execute('''
                    INSERT INTO customers (
@@ -198,7 +198,7 @@ def update_customer_defaults(customer_id, data):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
-    # 1. Get old values and end_date
+    
     cursor.execute('''
         SELECT end_date, duration
         FROM customers
@@ -214,7 +214,7 @@ def update_customer_defaults(customer_id, data):
     end_date_str = row[0]
     duration = row[1]
 
-    # 2. Get all existing meal dates for customer from today to end_date
+    
     today = datetime.today().strftime("%Y-%m-%d")
     cursor.execute('''
         SELECT date FROM meals
@@ -222,14 +222,14 @@ def update_customer_defaults(customer_id, data):
     ''', (customer_id, today))
     existing_dates = set(row[0] for row in cursor.fetchall())
 
-    # 3. Generate full list of required meal days
+    
     all_days = generate_meal_days(today, duration, data["weekend_meal"])
     all_dates = set(day["date"] for day in all_days)
 
-    # 4. Determine paused/skipped dates
+    
     paused_dates = all_dates - existing_dates
 
-    # 5. Update customer defaults
+    
     cursor.execute('''
         UPDATE customers
         SET name = ?, address1 = ?, address2 = ?, phone = ?, weekend_meal = ?,
@@ -246,13 +246,13 @@ def update_customer_defaults(customer_id, data):
         customer_id
     ))
 
-    # 6. Delete only non-paused future meals
+    
     cursor.execute('''
         DELETE FROM meals
         WHERE customer_id = ? AND date >= ?
     ''', (customer_id, today))
 
-    # 7. Re-insert meals except paused ones
+    
     for day in all_days:
         if day["date"] in paused_dates:
             continue

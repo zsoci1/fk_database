@@ -18,7 +18,7 @@ def extract_group_and_clean(address):
 def export_delivery(date_str):
     os.makedirs("exports", exist_ok=True)
 
-    # 1. Fetch data from DB
+    
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     cursor.execute('''
@@ -31,7 +31,7 @@ def export_delivery(date_str):
     rows = cursor.fetchall()
     conn.close()
 
-    # 2. Prepare data: group + clean + sort
+    
     group1 = []
     group2 = []
 
@@ -46,22 +46,22 @@ def export_delivery(date_str):
         else:
             group2.append(values)
 
-    group1.sort(key=lambda v: v[3])  # Sort by address
+    group1.sort(key=lambda v: v[3])  
     group2.sort(key=lambda v: v[3])
 
-    # 3. Create workbook
+    
     wb = Workbook()
     ws = wb.active
     ws.title = "Delivery"
 
-    # 4. Title row
+    
     export_title = f"{date_str}"
     ws.merge_cells(start_row=1, start_column=1, end_row=1, end_column=6)
     title_cell = ws.cell(row=1, column=1, value=export_title)
     title_cell.font = Font(name="Calibri", size=14, bold=True)
     title_cell.alignment = Alignment(horizontal="center", vertical="center")
 
-    # 5. Header row
+    
     headers = ["Név", "Méret", "Étkezés", "Cím", "Tel.", "Megjegyzés"]
     ws.append(headers)
     header_font = Font(name="Calibri", size=12, bold=True)
@@ -71,7 +71,7 @@ def export_delivery(date_str):
         cell.fill = PatternFill(start_color="D9D9D9", fill_type="solid")
         cell.alignment = Alignment(horizontal="center", vertical="center")
 
-    # 6. Styles for data rows
+    
     fill1 = PatternFill(start_color="FFFFFF", fill_type="solid")
     fill2 = PatternFill(start_color="F2F2F2", fill_type="solid")
     current_row = 3
@@ -91,21 +91,21 @@ def export_delivery(date_str):
                 cell.alignment = Alignment(wrap_text=True, vertical="center")
             current_row += 1
 
-    # 7. Write both groups
+    
     write_group("Délutáni címek", group1, current_row)
     current_row += 1  # Blank line
     write_group("Esti címek", group2, current_row)
 
-    # 8. Center Size column (column B)
+    
     for row in ws.iter_rows(min_row=3, min_col=2, max_col=2, max_row=ws.max_row):
         for cell in row:
             cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
 
-    # 9. Row height tweak
+    
     for row_idx in range(3, ws.max_row + 1):
         ws.row_dimensions[row_idx].height = 30
 
-    # 10. Column widths (fit A4 width approx)
+    
     ws.column_dimensions["A"].width = 18  # Name
     ws.column_dimensions["B"].width = 8   # Size
     ws.column_dimensions["C"].width = 60  # Type (wrap)
@@ -113,7 +113,7 @@ def export_delivery(date_str):
     ws.column_dimensions["E"].width = 15  # Phone
     ws.column_dimensions["F"].width = 30  # Comment
 
-    # 11. Save file
+    
     filename = f"exports/delivery_{date_str}.xlsx"
     wb.save(filename)
     print(f"[✓] Delivery export completed → {filename}")
@@ -165,7 +165,7 @@ def export_kitchen(date_str):
     rows = cursor.fetchall()
     conn.close()
 
-    # Group and count meals: summary[size][(type, special)] = count
+    
     summary = {}
     for size, type_special_str in rows:
         parsed = parse_type_special(type_special_str)
@@ -180,7 +180,7 @@ def export_kitchen(date_str):
     ws = wb.active
     ws.title = "Kitchen"
 
-    # Title row
+    
     ws.merge_cells(start_row=1, start_column=1, end_row=1, end_column=3)
     title_cell = ws.cell(row=1, column=1, value=f"{date_str}")
     title_cell.font = Font(size=14, bold=True)
@@ -194,14 +194,14 @@ def export_kitchen(date_str):
         if size not in summary:
             continue
 
-        # Sub-header: Size: S
+        
         ws.merge_cells(start_row=current_row, start_column=1, end_row=current_row, end_column=3)
         cell = ws.cell(row=current_row, column=1, value=f"Méret: {size}")
         cell.font = Font(bold=True, size=12)
         cell.alignment = Alignment(horizontal="left")
         current_row += 1
 
-        # Column headers
+        
         headers = ["Étkezés", "Spec.", "Mennyiség"]
         for col_num, header in enumerate(headers, start=1):
             cell = ws.cell(row=current_row, column=col_num, value=header)
@@ -210,7 +210,7 @@ def export_kitchen(date_str):
             cell.alignment = Alignment(horizontal="center")
         current_row += 1
 
-        # Table content
+        
         items = sorted(summary[size].items(), key=lambda x: (x[0][0], x[0][1] or ""))
         for i, ((meal_type, special), count) in enumerate(items):
             values = [meal_type, special or "", count]
@@ -221,9 +221,9 @@ def export_kitchen(date_str):
                 cell.alignment = Alignment(vertical="center")
             current_row += 1
 
-        current_row += 1  # space between tables
+        current_row += 1  
 
-    # Auto column widths
+    
     for i, col in enumerate(ws.columns, start=1):
         max_length = 0
         col_letter = get_column_letter(i)

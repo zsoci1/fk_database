@@ -11,7 +11,7 @@
     pip install -r requirements.txt
 
 5. run the app
-    python ui/main.py
+    python main.py
 
 6. create a mac shortcut
     open automator.app
