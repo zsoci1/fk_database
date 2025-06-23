@@ -26,23 +26,26 @@ def calc_end_date(start_date, duration, weekend_meal_enabled):
 # megkapja: start_date, end_date, weekend_meal_enabled
 # visszaadja egy dictionary-ket tartalmazo listat az osszes datummal a kezdo es vege datum kozott
 # PL: [{'date': '2025-06-15', 'type': 'normal'}, {'date': '2025-06-16', 'type': 'normal'}]
-def generate_meal_days(start_date, end_date, weekend_meal_enabled):
-
-    current = datetime.strptime(start_date, "%Y-%m-%d")
-    end = datetime.strptime(end_date, "%Y-%m-%d")
+def generate_meal_days(start_date_str, duration, weekend_meal_enabled=0):
+    
+    start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
+    current_date = start_date
     meal_days = []
+    meal_count = 0
 
-    while current <= end:
-        weekday = current.weekday()
-        date_str = current.strftime("%Y-%m-%d")
+    while meal_count < int(duration):
+        weekday = current_date.weekday()  
 
-        if weekday in [6, 0, 1, 2]:
-            meal_days.append({"date": date_str, "type": "normal"})
-        elif weekday == 3:
-            meal_days.append({"date": date_str, "type": "normal"})
-            if weekend_meal_enabled:
-                meal_days.append({"date": date_str, "type": "weekend"})
-        current += timedelta(days=1)
+        if weekday in [6, 0, 1, 2, 3]:  
+            meal_days.append({"date": current_date.strftime("%Y-%m-%d")})
+            meal_count += 1
+
+            
+            if weekend_meal_enabled and meal_count < int(duration) and weekday == 3:
+                meal_days.append({"date": current_date.strftime("%Y-%m-%d")})  
+                meal_count += 1
+
+        current_date += timedelta(days=1)
 
     return meal_days
 
@@ -79,3 +82,5 @@ def get_current_week_range():
     end_srt = thursday.strftime("%Y-%m-%d")  # csutortok
 
     return (start_str, end_srt)
+
+

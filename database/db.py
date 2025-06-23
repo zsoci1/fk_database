@@ -19,7 +19,7 @@ def SQLite_connection():
     finally:
         conn.close()
 
-# TODO CONNECT TO EXIT PROTOCOL
+
 # backup database
 def SQLite_BACKUP():
     conn = sqlite3.connect(DB_PATH)
@@ -69,22 +69,16 @@ def add_customer(data):
     
     customer_id = cursor.lastrowid # stores the id of the last inserted row
     
-    working_days = generate_meal_days(start_date, end_date, weekend_meal_enabled=weekend_meal)
+    working_days = generate_meal_days(start_date, duration, weekend_meal_enabled=weekend_meal)
 
 
     for meal_info in working_days:
         meal_date = meal_info["date"]
-        meal_type = meal_info["type"]
-
-        if meal_type == "weekend":
-            type_special = default_type_special + " (weekend)"
-        else:
-            type_special = default_type_special
 
         cursor.execute('''
                        INSERT INTO meals (customer_id, date, size, type_special, price_day)
                        VALUES (?, ?, ?, ?, ?)
-                       ''', (customer_id, meal_date, default_size, type_special, price_day))
+                       ''', (customer_id, meal_date, default_size, default_type_special, price_day))
 
 
     conn.commit()
@@ -523,3 +517,6 @@ def DELETE_ALL():
     cursor.execute('''DELETE FROM meals''')
     conn.commit()
     conn.close()
+
+#DELETE_ALL()
+#TEST_PRINT()
