@@ -137,7 +137,7 @@ class ModPage(ctk.CTkFrame):
         if self.whisper_btn is None:
             self.whisper_btn = ctk.CTkButton(self, text="Súgó", font=("Verdana", 12),command=lambda:CustomMessageBox(
             title='Súgó',
-            text='Típus mező használata:\n❌ reggeli vega tejmentes, ebéd vega...\n✔️ reggeli:vega tejmentes, ebed:vega...',    
+            text='Típus mező használata:\n❌ reggeli vega tejmentes, ebed vega...\n✔️ reggeli:vega tejmentes, ebed:vega...',    
             ))
             self.whisper_btn.grid(row=10, column=0, padx=20, pady=10, sticky="w")
 

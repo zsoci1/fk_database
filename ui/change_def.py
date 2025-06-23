@@ -381,15 +381,65 @@ class ChangeDef(ctk.CTkScrollableFrame):
     # Show subscription buttons
     def subscription_buttons(self):
         if self.pause_subscription is None:
-            self.pause_subscription = ctk.CTkButton(self, text="Előfizetés leállítása\n(mai naptól)",font=("Verdana", 16), width=200, command=self.stop_subs)
+            self.pause_subscription = ctk.CTkButton(self, text="Előfizetés leállítása\n(mai naptól)",font=("Verdana", 16), width=200, command=self.confirmation_box)
             self.pause_subscription.grid(row=22, column=0, padx=20, pady=10, sticky="w")
 
         if self.start_subscription is None:
             self.start_subscription = ctk.CTkButton(self, text="Előfizetés aktiválása ⧉",font=("Verdana", 16), command=self.activate_subscription) 
             self.start_subscription.grid(row=23, column=0, padx=20, pady=10, sticky="w")
 
+    # Confirmation for stopping subscription
+    def confirmation_box(self):
+        self.confirmation = ctk.CTkToplevel(self)
+        self.confirmation.title("Megerősítés")
+        self.confirmation.geometry("400x150")
+        self.confirmation.resizable(False, False)
+        self.confirmation.grab_set() 
+
+        self.confirmation.grid_columnconfigure(0, weight=1)  
+
+        # Label in the middle
+        self.label = ctk.CTkLabel(
+            self.confirmation,
+            text="Biztosan le szeretnéd állítani az előfizetést?",
+            font=("Verdana", 12),
+            wraplength=360,
+            justify="center"
+        )
+        self.label.grid(row=0, column=0, padx=20, pady=(20, 10), sticky="n")
+
+        # Separate frame for buttons
+        button_frame = ctk.CTkFrame(self.confirmation, fg_color="transparent")
+        button_frame.grid(row=1, column=0, pady=(0, 20))
+
+        # Igen gomb
+        self.yes_button = ctk.CTkButton(button_frame, text="Igen", font=("Verdana", 10), width=80, command=self.stop_subs)
+        self.yes_button.pack(side="left", padx=10)
+
+        # Nem gomb
+        self.no_button = ctk.CTkButton(button_frame, text="Nem", font=("Verdana", 10), width=80, command=self.confirmation.destroy)
+        self.no_button.pack(side="left", padx=10)
+
+
+        # Center the confirmation box
+        self.confirmation.update_idletasks()
+
+        main_x = self.winfo_rootx()
+        main_y = self.winfo_rooty()
+        main_width = self.winfo_width()
+        main_height = self.winfo_height()
+
+        top_width = self.confirmation.winfo_width()
+        top_height = self.confirmation.winfo_height()
+
+        pos_x = main_x + (main_width // 2) - (top_width // 2)
+        pos_y = main_y + (main_height // 2) - (top_height // 2)
+
+        self.confirmation.geometry(f"+{pos_x}+{pos_y}")
+
     # Stop the subscription
     def stop_subs(self):
+        self.confirmation.destroy()
         stop_subscription(self.chosen_id)
         self.show_subscription()
         self.mod_page.refresh_page()

@@ -4,6 +4,8 @@ from ui.add_clients import AddPage
 from ui.edit_meals import ModPage
 from ui.change_def import ChangeDef
 from ui.export import ExportPage
+from database.db import SQLite_BACKUP
+
 
 # Main menu class
 class MainMenu(ctk.CTk):
@@ -13,6 +15,7 @@ class MainMenu(ctk.CTk):
         self.current_frame = None
         
         self.setup_window()
+        self.master.protocol("WM_DELETE_WINDOW", self.on_close)
         self.create_widgets()
         # Load all pages into a dictionary
         self.pages = {}
@@ -29,6 +32,16 @@ class MainMenu(ctk.CTk):
         self.create_buttons()
         # Show efault page
         self.show_page(ExportPage)
+
+
+
+    def on_close(self):
+        try:
+            SQLite_BACKUP()
+        except Exception as e:
+            print(f"Hiba történt a backup során: {e}")
+        finally:
+            self.master.destroy()
 
     # Setting up window
     def setup_window(self):
@@ -85,7 +98,7 @@ class MainMenu(ctk.CTk):
         self.edit_meals_btn = ctk.CTkButton(self.sidebar_frame, text ="Módosítás", font=("Verdana", 22, "bold" ),width=130,height=38, command=lambda:self.show_page(ModPage))
         self.edit_meals_btn.grid(row =3, column =0, padx =20, pady =35)
 
-        self.exit_btn = ctk.CTkButton(self.sidebar_frame, text ="Kilépés", font=("Verdana", 22, "bold" ),width=140,height=38, command=self.master.destroy)
+        self.exit_btn = ctk.CTkButton(self.sidebar_frame, text ="Kilépés", font=("Verdana", 22, "bold" ),width=140,height=38, command=self.on_close)
         self.exit_btn.grid(row =4, column =0, padx =20, pady =35)
 
     def show_page(self, page_name):

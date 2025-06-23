@@ -112,7 +112,7 @@ class AddPage(ctk.CTkFrame):
             self.checkbox.grid(row=idx, column=1, padx=(20,0), pady=(0,10),sticky="ew")
             self.checkbox_vars.append(var)
 
-            entry = ctk.CTkEntry(self)
+            entry = ctk.CTkEntry(self, placeholder_text="pl. glut tejmentes")
             entry.grid(row=idx, column=1, padx=(110,0), pady=(0,10), sticky="ew")
             self.special_entries.append(entry)
             idx +=1
@@ -199,8 +199,8 @@ class AddPage(ctk.CTkFrame):
             if self.updated_label:
                 self.updated_label.destroy()
             self.updated_label = ctk.CTkLabel(self, text="Hozzáadva", font=("Verdana", 14, "bold"), text_color="green")
-            self.updated_label.grid(row =13, column=0, padx=20, pady=10, sticky="w")
-            self.after(10000, self.updated_label.destroy)
+            self.updated_label.grid(row =12, column=0, padx=20, pady=(0,40), sticky="w")
+            self.after(5000, self.updated_label.destroy)
 
     # Inputok torlese
     def delete_input(self,input):
