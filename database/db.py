@@ -365,7 +365,7 @@ def activate_subscription(customer_id, start_date, duration, weekend_meal_enable
     
     # fetch default values from customers table
     cursor.execute('''
-                   SELECT default_size, default_type_special, price_day
+                   SELECT default_size, default_type_special
                    FROM customers
                    WHERE id = ?
                    ''', (customer_id,))
@@ -373,19 +373,17 @@ def activate_subscription(customer_id, start_date, duration, weekend_meal_enable
     default_row = cursor.fetchone()
 
     if default_row:
-        default_size, default_type_special, price_day = default_row
-        working_days = generate_meal_days(start_date, end_date, weekend_meal_enabled)
+        default_size, default_type_special = default_row
+        working_days = generate_meal_days(start_date, duration, weekend_meal_enabled)
 
         for day in working_days:
 
             type_special = default_type_special
-            if day["type"] == "weekend":
-                type_special += " (weekend)"
 
             cursor.execute('''
-                           INSERT INTO meals (customer_id, date, size, type_special, price_day)
-                           VALUES (?, ?, ?, ?, ?)
-                           ''', (customer_id, day["date"], default_size, type_special, price_day))
+                           INSERT INTO meals (customer_id, date, size, type_special)
+                           VALUES (?, ?, ?, ?)
+                           ''', (customer_id, day["date"], default_size, type_special))
             
     conn.commit()
     conn.close()
