@@ -26,7 +26,7 @@ def SQLite_BACKUP():
 
     filename = f"backups/backup_{datetime.today().strftime('%Y-%m-%d_%H-%M-%S')}.sql"
 
-    with io.open(filename, 'w') as p:
+    with io.open(filename, 'w', encoding="UTF8") as p:
         for line in conn.iterdump():
             p.write('%s\n' % line)
     

@@ -1,0 +1,233 @@
+BEGIN TRANSACTION;
+CREATE TABLE customers (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	name TEXT NOT NULL,
+	address1 TEXT,
+	address2 TEXT,
+	phone TEXT,
+	start_date DATE,
+	duration INTEGER NOT NULL,
+	end_date DATE,
+	weekend_meal INTEGER DEFAULT 0, -- 1 ha aktiv, 0 ha nem
+	default_size TEXT CHECK(default_size IN ('S', 'M', 'L', 'XL')),
+	default_type_special TEXT, --vesszovel elvalasztva reggeli,ebed-VEGA,..
+	price_day INTEGER DEFAULT 0
+);
+INSERT INTO "customers" VALUES(1,'Gita','DS','','092332','2025-06-22',10,'2025-07-02',1,'M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "customers" VALUES(2,'Alfonz','','','','2025-06-22',5,'2025-06-26',0,'XL','reggeli, snack, vacsora',0);
+INSERT INTO "customers" VALUES(3,'Antal Szilvia','DS, Komenskeho 1c','','0923 345 532','2025-06-22',10,'2025-07-03',0,'M','ebed, snack, vacsora',0);
+INSERT INTO "customers" VALUES(4,'Tesco fodraszat Gabi','DS, Tesco fodraszat','','0982 334 422','2025-06-22',5,'2025-06-26',0,'M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "customers" VALUES(5,'Hipik Tibi','DS, Aktaon','Hetvege: Csukarabony 111','0983 345 554','2025-06-22',20,'2025-07-17',0,'M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "customers" VALUES(6,'Szabo Krisztian','Velkoblahovska cesta 6750/9E (billa mellett)','','0987 234 342','2025-06-22',10,'2025-07-02',1,'M','reggeli, ebed:vega, snack, vacsora:vega',0);
+INSERT INTO "customers" VALUES(7,'Gyore Gabor','Győr, Bakcsy Zsilinsky ut 15 1/3 ','','3630 234 4222','2025-06-22',10,'2025-07-03',0,'L','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "customers" VALUES(8,'Varga Pal','Kutniky, Hedbeneete 530 #2','','0983 324 422','2025-06-22',10,'2025-07-03',0,'M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "customers" VALUES(9,'Varga Pal felesege','Kutniky, Hedbeneete 530 #2','','0934 432 345','2025-06-22',10,'2025-07-03',0,'S','reggeli:tejmentes, ebed, snack:tejmentes, vacsora',0);
+INSERT INTO "customers" VALUES(10,'Szigeti Gergely','Nagyudvarnok, Lesna 579/10 #2','','0923 345 432','2025-06-22',20,'2025-07-17',0,'M','ebed:vega, vacsora:vega',0);
+INSERT INTO "customers" VALUES(11,'Csicsay Zsuzsi','DS, Karolya Szladitsa 7476/11 #2 ','','0932 323 244','2025-06-22',20,'2025-07-17',0,'M','reggeli, ebed, vacsora',0);
+INSERT INTO "customers" VALUES(12,'Molnar Melinda','DS, Hajska 6187/9 #2','','0923 323 422','2025-06-22',20,'2025-07-17',0,'S','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "customers" VALUES(13,'Dosztal Monika','DS, Jantarova 1867/71 #2','','0994 432 234','2025-06-22',20,'2025-07-17',0,'M','ebed, snack:tejmentes, vacsora:vega',0);
+INSERT INTO "customers" VALUES(14,'Hajos Timi','DS, Ul. Sandora Petofiho 48 #2','','0923 342 234','2025-06-22',20,'2025-07-17',0,'M','reggeli:glut ment, ebed:glut ment, snack:glut ment, vacsora:glut ment vega',0);
+CREATE TABLE meals (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	customer_id INTEGER NOT NULL,
+	date DATE NOT NULL,
+	size TEXT CHECK(size IN ('S', 'M', 'L', 'XL')),
+	type_special TEXT, --vesszovel elvalasztva pl: ebed:vega , snack, vacsora
+	price_day INTEGER DEFAULT 0,
+	FOREIGN KEY (customer_id) REFERENCES customers(id)
+		
+);
+INSERT INTO "meals" VALUES(1,1,'2025-06-22','S','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(11,2,'2025-06-22','XL','reggeli, snack, vacsora',0);
+INSERT INTO "meals" VALUES(12,2,'2025-06-23','XL','reggeli, snack, vacsora',0);
+INSERT INTO "meals" VALUES(13,2,'2025-06-24','XL','reggeli, snack, vacsora',0);
+INSERT INTO "meals" VALUES(14,2,'2025-06-25','XL','reggeli, snack, vacsora',0);
+INSERT INTO "meals" VALUES(15,2,'2025-06-26','XL','reggeli, snack, vacsora',0);
+INSERT INTO "meals" VALUES(25,1,'2025-06-23','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(26,1,'2025-06-24','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(27,1,'2025-06-25','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(28,1,'2025-06-26','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(29,1,'2025-06-26','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(30,1,'2025-06-29','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(31,1,'2025-06-30','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(32,1,'2025-07-01','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(33,1,'2025-07-02','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(34,3,'2025-06-22','M','ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(35,3,'2025-06-23','M','ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(36,3,'2025-06-24','M','ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(37,3,'2025-06-25','M','ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(38,3,'2025-06-26','M','ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(39,3,'2025-06-29','M','ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(40,3,'2025-06-30','M','ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(41,3,'2025-07-01','M','ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(42,3,'2025-07-02','M','ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(43,3,'2025-07-03','M','ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(44,4,'2025-06-22','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(45,4,'2025-06-23','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(46,4,'2025-06-24','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(47,4,'2025-06-25','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(48,4,'2025-06-26','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(49,5,'2025-06-22','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(50,5,'2025-06-23','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(51,5,'2025-06-24','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(52,5,'2025-06-25','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(53,5,'2025-06-26','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(54,5,'2025-06-29','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(55,5,'2025-06-30','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(56,5,'2025-07-01','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(57,5,'2025-07-02','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(58,5,'2025-07-03','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(59,5,'2025-07-06','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(60,5,'2025-07-07','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(61,5,'2025-07-08','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(62,5,'2025-07-09','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(63,5,'2025-07-10','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(64,5,'2025-07-13','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(65,5,'2025-07-14','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(66,5,'2025-07-15','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(67,5,'2025-07-16','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(68,5,'2025-07-17','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(69,6,'2025-06-22','M','reggeli, ebed:vega, snack, vacsora:vega',0);
+INSERT INTO "meals" VALUES(70,6,'2025-06-23','M','reggeli, ebed:vega, snack, vacsora:vega',0);
+INSERT INTO "meals" VALUES(71,6,'2025-06-24','M','reggeli, ebed:vega, snack, vacsora:vega',0);
+INSERT INTO "meals" VALUES(72,6,'2025-06-25','M','reggeli, ebed:vega, snack, vacsora:vega',0);
+INSERT INTO "meals" VALUES(73,6,'2025-06-26','M','reggeli, ebed:vega, snack, vacsora:vega',0);
+INSERT INTO "meals" VALUES(74,6,'2025-06-26','M','reggeli, ebed:vega, snack, vacsora:vega',0);
+INSERT INTO "meals" VALUES(75,6,'2025-06-29','M','reggeli, ebed:vega, snack, vacsora:vega',0);
+INSERT INTO "meals" VALUES(76,6,'2025-06-30','M','reggeli, ebed:vega, snack, vacsora:vega',0);
+INSERT INTO "meals" VALUES(77,6,'2025-07-01','M','reggeli, ebed:vega, snack, vacsora:vega',0);
+INSERT INTO "meals" VALUES(78,6,'2025-07-02','M','reggeli, ebed:vega, snack, vacsora:vega',0);
+INSERT INTO "meals" VALUES(79,7,'2025-06-22','L','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(89,8,'2025-06-22','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(99,9,'2025-06-22','S','reggeli:tejmentes, ebed, snack:tejmentes, vacsora',0);
+INSERT INTO "meals" VALUES(109,10,'2025-06-22','M','ebed:vega, vacsora:vega',0);
+INSERT INTO "meals" VALUES(110,10,'2025-06-23','M','ebed:vega, vacsora:vega',0);
+INSERT INTO "meals" VALUES(111,10,'2025-06-24','M','ebed:vega, vacsora:vega',0);
+INSERT INTO "meals" VALUES(112,10,'2025-06-25','M','ebed:vega, vacsora:vega',0);
+INSERT INTO "meals" VALUES(113,10,'2025-06-26','M','ebed:vega, vacsora:vega',0);
+INSERT INTO "meals" VALUES(114,10,'2025-06-29','M','ebed:vega, vacsora:vega',0);
+INSERT INTO "meals" VALUES(115,10,'2025-06-30','M','ebed:vega, vacsora:vega',0);
+INSERT INTO "meals" VALUES(116,10,'2025-07-01','M','ebed:vega, vacsora:vega',0);
+INSERT INTO "meals" VALUES(117,10,'2025-07-02','M','ebed:vega, vacsora:vega',0);
+INSERT INTO "meals" VALUES(118,10,'2025-07-03','M','ebed:vega, vacsora:vega',0);
+INSERT INTO "meals" VALUES(119,10,'2025-07-06','M','ebed:vega, vacsora:vega',0);
+INSERT INTO "meals" VALUES(120,10,'2025-07-07','M','ebed:vega, vacsora:vega',0);
+INSERT INTO "meals" VALUES(121,10,'2025-07-08','M','ebed:vega, vacsora:vega',0);
+INSERT INTO "meals" VALUES(122,10,'2025-07-09','M','ebed:vega, vacsora:vega',0);
+INSERT INTO "meals" VALUES(123,10,'2025-07-10','M','ebed:vega, vacsora:vega',0);
+INSERT INTO "meals" VALUES(124,10,'2025-07-13','M','ebed:vega, vacsora:vega',0);
+INSERT INTO "meals" VALUES(125,10,'2025-07-14','M','ebed:vega, vacsora:vega',0);
+INSERT INTO "meals" VALUES(126,10,'2025-07-15','M','ebed:vega, vacsora:vega',0);
+INSERT INTO "meals" VALUES(127,10,'2025-07-16','M','ebed:vega, vacsora:vega',0);
+INSERT INTO "meals" VALUES(128,10,'2025-07-17','M','ebed:vega, vacsora:vega',0);
+INSERT INTO "meals" VALUES(129,8,'2025-06-23','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(130,8,'2025-06-24','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(131,8,'2025-06-25','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(132,8,'2025-06-26','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(133,8,'2025-06-29','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(134,8,'2025-06-30','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(135,8,'2025-07-01','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(136,8,'2025-07-02','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(137,8,'2025-07-03','M','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(138,9,'2025-06-23','S','reggeli:tejmentes, ebed, snack:tejmentes, vacsora',0);
+INSERT INTO "meals" VALUES(139,9,'2025-06-24','S','reggeli:tejmentes, ebed, snack:tejmentes, vacsora',0);
+INSERT INTO "meals" VALUES(140,9,'2025-06-25','S','reggeli:tejmentes, ebed, snack:tejmentes, vacsora',0);
+INSERT INTO "meals" VALUES(141,9,'2025-06-26','S','reggeli:tejmentes, ebed, snack:tejmentes, vacsora',0);
+INSERT INTO "meals" VALUES(142,9,'2025-06-29','S','reggeli:tejmentes, ebed, snack:tejmentes, vacsora',0);
+INSERT INTO "meals" VALUES(143,9,'2025-06-30','S','reggeli:tejmentes, ebed, snack:tejmentes, vacsora',0);
+INSERT INTO "meals" VALUES(144,9,'2025-07-01','S','reggeli:tejmentes, ebed, snack:tejmentes, vacsora',0);
+INSERT INTO "meals" VALUES(145,9,'2025-07-02','S','reggeli:tejmentes, ebed, snack:tejmentes, vacsora',0);
+INSERT INTO "meals" VALUES(146,9,'2025-07-03','S','reggeli:tejmentes, ebed, snack:tejmentes, vacsora',0);
+INSERT INTO "meals" VALUES(147,11,'2025-06-22','M','reggeli, ebed, vacsora',0);
+INSERT INTO "meals" VALUES(148,11,'2025-06-23','M','reggeli, ebed, vacsora',0);
+INSERT INTO "meals" VALUES(149,11,'2025-06-24','M','reggeli, ebed, vacsora',0);
+INSERT INTO "meals" VALUES(150,11,'2025-06-25','M','reggeli, ebed, vacsora',0);
+INSERT INTO "meals" VALUES(151,11,'2025-06-26','M','reggeli, ebed, vacsora',0);
+INSERT INTO "meals" VALUES(152,11,'2025-06-29','M','reggeli, ebed, vacsora',0);
+INSERT INTO "meals" VALUES(153,11,'2025-06-30','M','reggeli, ebed, vacsora',0);
+INSERT INTO "meals" VALUES(154,11,'2025-07-01','M','reggeli, ebed, vacsora',0);
+INSERT INTO "meals" VALUES(155,11,'2025-07-02','M','reggeli, ebed, vacsora',0);
+INSERT INTO "meals" VALUES(156,11,'2025-07-03','M','reggeli, ebed, vacsora',0);
+INSERT INTO "meals" VALUES(157,11,'2025-07-06','M','reggeli, ebed, vacsora',0);
+INSERT INTO "meals" VALUES(158,11,'2025-07-07','M','reggeli, ebed, vacsora',0);
+INSERT INTO "meals" VALUES(159,11,'2025-07-08','M','reggeli, ebed, vacsora',0);
+INSERT INTO "meals" VALUES(160,11,'2025-07-09','M','reggeli, ebed, vacsora',0);
+INSERT INTO "meals" VALUES(161,11,'2025-07-10','M','reggeli, ebed, vacsora',0);
+INSERT INTO "meals" VALUES(162,11,'2025-07-13','M','reggeli, ebed, vacsora',0);
+INSERT INTO "meals" VALUES(163,11,'2025-07-14','M','reggeli, ebed, vacsora',0);
+INSERT INTO "meals" VALUES(164,11,'2025-07-15','M','reggeli, ebed, vacsora',0);
+INSERT INTO "meals" VALUES(165,11,'2025-07-16','M','reggeli, ebed, vacsora',0);
+INSERT INTO "meals" VALUES(166,11,'2025-07-17','M','reggeli, ebed, vacsora',0);
+INSERT INTO "meals" VALUES(167,12,'2025-06-22','S','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(168,12,'2025-06-23','S','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(169,12,'2025-06-24','S','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(170,12,'2025-06-25','S','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(171,12,'2025-06-26','S','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(172,12,'2025-06-29','S','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(173,12,'2025-06-30','S','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(174,12,'2025-07-01','S','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(175,12,'2025-07-02','S','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(176,12,'2025-07-03','S','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(177,12,'2025-07-06','S','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(178,12,'2025-07-07','S','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(179,12,'2025-07-08','S','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(180,12,'2025-07-09','S','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(181,12,'2025-07-10','S','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(182,12,'2025-07-13','S','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(183,12,'2025-07-14','S','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(184,12,'2025-07-15','S','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(185,12,'2025-07-16','S','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(186,12,'2025-07-17','S','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(187,13,'2025-06-22','M','ebed, snack:tejmentes, vacsora:vega',0);
+INSERT INTO "meals" VALUES(207,14,'2025-06-22','M','reggeli:glut ment, ebed:glut ment, snack:glut ment, vacsora:glut ment vega',0);
+INSERT INTO "meals" VALUES(208,14,'2025-06-23','M','reggeli:glut ment, ebed:glut ment, snack:glut ment, vacsora:glut ment vega',0);
+INSERT INTO "meals" VALUES(209,14,'2025-06-24','M','reggeli:glut ment, ebed:glut ment, snack:glut ment, vacsora:glut ment vega',0);
+INSERT INTO "meals" VALUES(210,14,'2025-06-25','M','reggeli:glut ment, ebed:glut ment, snack:glut ment, vacsora:glut ment vega',0);
+INSERT INTO "meals" VALUES(211,14,'2025-06-26','M','reggeli:glut ment, ebed:glut ment, snack:glut ment, vacsora:glut ment vega',0);
+INSERT INTO "meals" VALUES(212,14,'2025-06-29','M','reggeli:glut ment, ebed:glut ment, snack:glut ment, vacsora:glut ment vega',0);
+INSERT INTO "meals" VALUES(213,14,'2025-06-30','M','reggeli:glut ment, ebed:glut ment, snack:glut ment, vacsora:glut ment vega',0);
+INSERT INTO "meals" VALUES(214,14,'2025-07-01','M','reggeli:glut ment, ebed:glut ment, snack:glut ment, vacsora:glut ment vega',0);
+INSERT INTO "meals" VALUES(215,14,'2025-07-02','M','reggeli:glut ment, ebed:glut ment, snack:glut ment, vacsora:glut ment vega',0);
+INSERT INTO "meals" VALUES(216,14,'2025-07-03','M','reggeli:glut ment, ebed:glut ment, snack:glut ment, vacsora:glut ment vega',0);
+INSERT INTO "meals" VALUES(217,14,'2025-07-06','M','reggeli:glut ment, ebed:glut ment, snack:glut ment, vacsora:glut ment vega',0);
+INSERT INTO "meals" VALUES(218,14,'2025-07-07','M','reggeli:glut ment, ebed:glut ment, snack:glut ment, vacsora:glut ment vega',0);
+INSERT INTO "meals" VALUES(219,14,'2025-07-08','M','reggeli:glut ment, ebed:glut ment, snack:glut ment, vacsora:glut ment vega',0);
+INSERT INTO "meals" VALUES(220,14,'2025-07-09','M','reggeli:glut ment, ebed:glut ment, snack:glut ment, vacsora:glut ment vega',0);
+INSERT INTO "meals" VALUES(221,14,'2025-07-10','M','reggeli:glut ment, ebed:glut ment, snack:glut ment, vacsora:glut ment vega',0);
+INSERT INTO "meals" VALUES(222,14,'2025-07-13','M','reggeli:glut ment, ebed:glut ment, snack:glut ment, vacsora:glut ment vega',0);
+INSERT INTO "meals" VALUES(223,14,'2025-07-14','M','reggeli:glut ment, ebed:glut ment, snack:glut ment, vacsora:glut ment vega',0);
+INSERT INTO "meals" VALUES(224,14,'2025-07-15','M','reggeli:glut ment, ebed:glut ment, snack:glut ment, vacsora:glut ment vega',0);
+INSERT INTO "meals" VALUES(225,14,'2025-07-16','M','reggeli:glut ment, ebed:glut ment, snack:glut ment, vacsora:glut ment vega',0);
+INSERT INTO "meals" VALUES(226,14,'2025-07-17','M','reggeli:glut ment, ebed:glut ment, snack:glut ment, vacsora:glut ment vega',0);
+INSERT INTO "meals" VALUES(227,13,'2025-06-23','M','ebed, snack:tejmentes, vacsora:vega',0);
+INSERT INTO "meals" VALUES(228,13,'2025-06-24','M','ebed, snack:tejmentes, vacsora:vega',0);
+INSERT INTO "meals" VALUES(229,13,'2025-06-25','M','ebed, snack:tejmentes, vacsora:vega',0);
+INSERT INTO "meals" VALUES(230,13,'2025-06-26','M','ebed, snack:tejmentes, vacsora:vega',0);
+INSERT INTO "meals" VALUES(231,13,'2025-06-29','M','ebed, snack:tejmentes, vacsora:vega',0);
+INSERT INTO "meals" VALUES(232,13,'2025-06-30','M','ebed, snack:tejmentes, vacsora:vega',0);
+INSERT INTO "meals" VALUES(233,13,'2025-07-01','M','ebed, snack:tejmentes, vacsora:vega',0);
+INSERT INTO "meals" VALUES(234,13,'2025-07-02','M','ebed, snack:tejmentes, vacsora:vega',0);
+INSERT INTO "meals" VALUES(235,13,'2025-07-03','M','ebed, snack:tejmentes, vacsora:vega',0);
+INSERT INTO "meals" VALUES(236,13,'2025-07-06','M','ebed, snack:tejmentes, vacsora:vega',0);
+INSERT INTO "meals" VALUES(237,13,'2025-07-07','M','ebed, snack:tejmentes, vacsora:vega',0);
+INSERT INTO "meals" VALUES(238,13,'2025-07-08','M','ebed, snack:tejmentes, vacsora:vega',0);
+INSERT INTO "meals" VALUES(239,13,'2025-07-09','M','ebed, snack:tejmentes, vacsora:vega',0);
+INSERT INTO "meals" VALUES(240,13,'2025-07-10','M','ebed, snack:tejmentes, vacsora:vega',0);
+INSERT INTO "meals" VALUES(241,13,'2025-07-13','M','ebed, snack:tejmentes, vacsora:vega',0);
+INSERT INTO "meals" VALUES(242,13,'2025-07-14','M','ebed, snack:tejmentes, vacsora:vega',0);
+INSERT INTO "meals" VALUES(243,13,'2025-07-15','M','ebed, snack:tejmentes, vacsora:vega',0);
+INSERT INTO "meals" VALUES(244,13,'2025-07-16','M','ebed, snack:tejmentes, vacsora:vega',0);
+INSERT INTO "meals" VALUES(245,13,'2025-07-17','M','ebed, snack:tejmentes, vacsora:vega',0);
+INSERT INTO "meals" VALUES(255,7,'2025-06-23','L','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(256,7,'2025-06-24','L','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(257,7,'2025-06-25','L','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(258,7,'2025-06-26','L','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(259,7,'2025-06-29','L','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(260,7,'2025-06-30','L','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(261,7,'2025-07-01','L','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(262,7,'2025-07-02','L','reggeli, ebed, snack, vacsora',0);
+INSERT INTO "meals" VALUES(263,7,'2025-07-03','L','reggeli, ebed, snack, vacsora',0);
+DELETE FROM "sqlite_sequence";
+INSERT INTO "sqlite_sequence" VALUES('customers',14);
+INSERT INTO "sqlite_sequence" VALUES('meals',263);
+COMMIT;
