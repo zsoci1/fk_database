@@ -508,15 +508,3 @@ def TEST_PRINT():
     meals = cursor.execute('''SELECT * FROM meals''')
     for row in meals:
         print(row)
-    
-# DELETING ALL (for testing)
-def DELETE_ALL():
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    cursor.execute('''DELETE FROM customers''')
-    cursor.execute('''DELETE FROM meals''')
-    conn.commit()
-    conn.close()
-
-#DELETE_ALL()
-#TEST_PRINT()
