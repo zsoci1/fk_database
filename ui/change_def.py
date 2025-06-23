@@ -73,30 +73,30 @@ class ChangeDef(ctk.CTkScrollableFrame):
 
         # Weekend meal input
         self.weekend_checkbox_label = ctk.CTkLabel(self, text="Hétvégi étkezés", font=("Verdana", 16))
-        self.weekend_checkbox_label.grid(row =5, column =0, padx =20, pady=10, sticky="w")
+        self.weekend_checkbox_label.grid(row =5, column =1, padx =20, pady=(10,0), sticky="w")
         self.weekend_var = tk.BooleanVar()
         self.weekend_checkbox = ctk.CTkCheckBox(self, text="", variable=self.weekend_var)
-        self.weekend_checkbox.grid(row =6, column = 0, padx=20, sticky="w")
+        self.weekend_checkbox.grid(row =6, column =1, padx=20, pady=0, sticky="nw")
         
         # Size input
         self.size_label = ctk.CTkLabel(self, text="Méret", font=("Verdana", 16))
-        self.size_label.grid(row =7, column =0, padx =20, pady=10, sticky="w")
+        self.size_label.grid(row =5, column =0, padx =20, pady=10, sticky="w")
         self.size_combobox = ctk.CTkComboBox(self, values=["S", "M", "L", "XL"], state="readonly")
-        self.size_combobox.grid(row=8, column=0, padx=20, pady=(0,10), sticky="ew")
+        self.size_combobox.grid(row=6, column=0, padx=20, pady=(0,10), sticky="ew")
 
         # Type / Type Special inputs
         self.type_label = ctk.CTkLabel(self, text="Típus", font=("Verdana", 16))
-        self.type_label.grid(row=7, column=1, padx=20, sticky="w")
+        self.type_label.grid(row=7, column=0, padx=20, pady=10, sticky="w")
         idx = 8
         self.meals = ["Reggeli", "Ebéd", "Snack", "Vacsora"]
         for i,meal in enumerate(self.meals):
             var = tk.BooleanVar()
             self.checkbox = ctk.CTkCheckBox(self, text=meal, variable=var)
-            self.checkbox.grid(row=idx, column=1, padx=(20,0), pady=(0,10),sticky="ew")
+            self.checkbox.grid(row=idx, column=0, padx=(20,0), pady=(0,10),sticky="ew")
             self.checkbox_vars.append(var)
 
             entry = ctk.CTkEntry(self)
-            entry.grid(row=idx, column=1, padx=(110,0), pady=(0,10), sticky="ew")
+            entry.grid(row=idx, column=0, padx=(110,0), pady=(0,10), sticky="ew")
             self.special_entries.append(entry)
             idx +=1
 
