@@ -24,7 +24,6 @@ class ModPage(ctk.CTkFrame):
         self.label = ctk.CTkLabel(self, text="Módosítás", font=("Verdana", 30, "bold"))
         self.label.grid(row = 0, column = 0, padx =20, pady =30, sticky="nw")
 
-
     def search_bar(self):
         self.search_entry = ctk.CTkEntry(self, placeholder_text="Keresés...")
         self.search_entry.grid(row =1, column=0, padx=(20,0), pady=10, sticky="w")
@@ -111,11 +110,11 @@ class ModPage(ctk.CTkFrame):
         self.customer_phone_label = ctk.CTkLabel(self, text=name_and_phone[1], font=("Verdana", 18))
         self.customer_phone_label.grid(row=3, column=0, padx=(120,0), sticky="w")
 
+        # Show change default button
         self.change_default()
 
     # Load data for treeview
     def load_data(self):
-
         date = get_current_week_range()
         id = self.chosen_id
         meal_for_week = get_meals_for_week(id,date[0], date[1])
@@ -144,15 +143,19 @@ class ModPage(ctk.CTkFrame):
         self.editable_treeview = EditableTreeView(self, meal_for_week, self.chosen_id, update_meal_type) 
         self.editable_treeview.grid(row=11, column=0, padx=20, pady=10, sticky="nsew")
 
+        # Show customer's info (name and phone number)
         self.show_customer_info()
 
+    # Show change default button
     def change_default(self):
         if self.change_def_btn is None:
             self.change_def_btn = ctk.CTkButton(self, text="Megrendelő adatainak szerkesztése", font=("Verdana", 18), command=lambda: self.mainmenu.show_page(ChangeDef))
             self.change_def_btn.grid(row =6, column =0, padx=20, pady=20, sticky="w")
     
+    # Delete all inputs
     def delete_input(self,input):
         input.delete(0, 'end')
 
+    # Refresh the ModPage
     def refresh_page(self):
         self.load_data()

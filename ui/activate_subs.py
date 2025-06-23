@@ -52,7 +52,6 @@ class ActivateSubs(ctk.CTkToplevel):
             pos_y = master_y + (master_h - win_h) // 2
             self.geometry(f"+{pos_x}+{pos_y}")
         else:
-            # Ha nincs master, akkor a képernyő közepére
             screen_w = self.winfo_screenwidth()
             screen_h = self.winfo_screenheight()
             win_w = self.winfo_width()

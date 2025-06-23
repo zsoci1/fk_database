@@ -26,8 +26,6 @@ class EditableTreeView(ttk.Treeview):
 
         self.column("meret", anchor="center")
 
-
-        # Először beszúrjuk az adatokat
         napok = ["Hét", "Kedd", "Sze", "Csüt", "Pén", "Szo", "Vas"]
 
         for i, row in enumerate(data):
@@ -38,9 +36,9 @@ class EditableTreeView(ttk.Treeview):
             except Exception:
                 formatted_date = row[0]
 
-            unique_id = f"{row[0]}_{i}"  # <-- Ez biztosítja, hogy minden sor egyedi legyen
+            unique_id = f"{row[0]}_{i}" 
             self.insert("", "end", iid=unique_id, values=(formatted_date, row[1], row[2]))
-        # Majd dinamikusan beállítjuk az oszlopszélességeket
+
         self.adjust_column_widths()
 
         self.bind("<Double-1>", self.on_double_click)
@@ -63,10 +61,8 @@ class EditableTreeView(ttk.Treeview):
                 if cell_width > max_width:
                     max_width = cell_width
 
-            # Az utolsó oszlop legyen nyújtható (stretch=True)
             stretch = True if idx == len(columns) - 1 else False
             self.column(col, width=max_width + padding, stretch=stretch)
-
 
     def on_double_click(self, event):
         region = self.identify("region", event.x, event.y)
@@ -100,5 +96,5 @@ class EditableTreeView(ttk.Treeview):
 
         self.set(row_id, column, new_value)
         
-        datum = row_id.split("_")[0]  # dátum kiszedése az iid-ből
+        datum = row_id.split("_")[0]  
         self.update_function(self.user_id, datum, new_value)

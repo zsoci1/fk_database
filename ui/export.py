@@ -58,6 +58,7 @@ class ExportPage(ctk.CTkFrame):
             export_kitchen(self.date_picker.get().strip())
             if self.date_picker.get().strip() != self.tomorrow:
                 self.update_location_label()
+                
     def exp_all(self):
         if self.date_picker.get().strip() =="":
                 CustomMessageBox(title='Hiba', text='A Dátum mező nem lehet üres.')

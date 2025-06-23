@@ -8,17 +8,17 @@ class CustomMessageBox(ctk.CTkToplevel):
         self.resizable(False, False)
         self.grab_set() 
         
-        # Szöveg megjelenítése (word-wrap)
+        # Show text
         self.label = ctk.CTkLabel(self, text=text,font=("Verdana", 12), wraplength=width - 40, justify="left")
         self.label.pack(padx=20, pady=(20, 10), fill="both", expand=True)
         
-        # OK gomb
+        # OK button
         self.ok_button = ctk.CTkButton(self, text="OK",font=("Verdana", 10), command=self.destroy)
         self.ok_button.pack(pady=(0, 20))
         
-        # Ablak középre helyezése a főablakhoz képest
         self.center_window()
 
+    # Center the window
     def center_window(self):
         self.update_idletasks()
         if self.master:
@@ -32,7 +32,6 @@ class CustomMessageBox(ctk.CTkToplevel):
             pos_y = master_y + (master_h - win_h) // 2
             self.geometry(f"+{pos_x}+{pos_y}")
         else:
-            # Ha nincs master, akkor a képernyő közepére
             screen_w = self.winfo_screenwidth()
             screen_h = self.winfo_screenheight()
             win_w = self.winfo_width()

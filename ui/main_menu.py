@@ -6,14 +6,12 @@ from ui.change_def import ChangeDef
 from ui.export import ExportPage
 from database.db import SQLite_BACKUP
 
-
 # Main menu class
 class MainMenu(ctk.CTk):
     # Inicializing methods
     def __init__(self, master):
         self.master = master
         self.current_frame = None
-        
         self.setup_window()
         self.master.protocol("WM_DELETE_WINDOW", self.on_close)
         self.create_widgets()
@@ -30,11 +28,10 @@ class MainMenu(ctk.CTk):
             page.grid(row=0, column=0, sticky="nsew")
             page.grid_remove()
         self.create_buttons()
-        # Show efault page
+        # Show default page
         self.show_page(ExportPage)
 
-
-
+    # Save backup when app gets destroyed
     def on_close(self):
         try:
             SQLite_BACKUP()
@@ -45,7 +42,7 @@ class MainMenu(ctk.CTk):
 
     # Setting up window
     def setup_window(self):
-        self.master.title("FitKitchen Manager")
+        self.master.title("FK Manager")
         self.master.geometry("1000x700")
         self.master.resizable(True, True)
         self.master.minsize(1000, 600)
@@ -88,7 +85,6 @@ class MainMenu(ctk.CTk):
 
     # Creating buttons in sidebar_frame
     def create_buttons(self):   
-
         self.export_btn = ctk.CTkButton(self.sidebar_frame, text ="Exportálás", font=("Verdana", 22, "bold" ), width=130, height=38, command=lambda:self.show_page(ExportPage))
         self.export_btn.grid(row =1, column =0, padx =20, pady =35)
 
@@ -105,7 +101,6 @@ class MainMenu(ctk.CTk):
         # Load user_input data before showing ChangeDef
         if page_name == ChangeDef:
             self.pages[ChangeDef].load_input()
-
         # Hiding the current_frame if it exists
         if self.current_frame:
             self.current_frame.grid_remove()

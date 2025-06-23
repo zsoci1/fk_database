@@ -151,7 +151,6 @@ class ChangeDef(ctk.CTkScrollableFrame):
         self.pause_start.delete(0, 'end')
         self.pause_end.delete(0, 'end')
 
-
     # Labels and Back button
     def setup_frame(self):
         self.grid_rowconfigure(0, weight=0)
@@ -378,7 +377,7 @@ class ChangeDef(ctk.CTkScrollableFrame):
         self.label = ctk.CTkLabel(
             self.confirmation,
             text="Biztosan le szeretnéd állítani az előfizetést?",
-            font=("Verdana", 12),
+            font=("Verdana", 14),
             wraplength=360,
             justify="center"
         )
@@ -390,12 +389,11 @@ class ChangeDef(ctk.CTkScrollableFrame):
 
         # Igen gomb
         self.yes_button = ctk.CTkButton(button_frame, text="Igen", font=("Verdana", 10), width=80, command=self.stop_subs)
-        self.yes_button.pack(side="left", padx=10)
+        self.yes_button.pack(side="left", padx=10, pady=10)
 
         # Nem gomb
         self.no_button = ctk.CTkButton(button_frame, text="Nem", font=("Verdana", 10), width=80, command=self.confirmation.destroy)
-        self.no_button.pack(side="left", padx=10)
-
+        self.no_button.pack(side="left", padx=10, pady=10)
 
         # Center the confirmation box
         self.confirmation.update_idletasks()
