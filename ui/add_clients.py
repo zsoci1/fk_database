@@ -26,7 +26,6 @@ class AddPage(ctk.CTkFrame):
         self.checkbox_vars=[]
         self.special_entries =[]
         self.meal_data = ["reggeli", "ebed", "snack", "vacsora"]
-        self.is_correct = False
         self.updated_label = None
         self.user_input()
     
@@ -125,6 +124,7 @@ class AddPage(ctk.CTkFrame):
 
     # Input hiba kezeles popup windowokkal
     def error_handling(self):
+        self.is_correct = False
         if self.name_entry.get().strip() == "":
             CustomMessageBox(title='Hiba', text='A Név mező nem lehet üres.')
         elif self.date_picker.get().strip() == "":

@@ -31,7 +31,6 @@ class ChangeDef(ctk.CTkScrollableFrame):
         self.checkbox_vars=[]
         self.special_entries =[]
         self.meal_data = ["reggeli", "ebed", "snack", "vacsora"]
-        self.is_correct = False
 
         # Setting None for later checking
         self.updated_label = None
@@ -260,6 +259,7 @@ class ChangeDef(ctk.CTkScrollableFrame):
     # Error handling for inputs
     def error_handling(self):
         # Checking entry dates
+        self.is_correct = False
         self.today = date.today().isoformat()
         if self.pause_start.get() != "" and self.pause_end.get() != "":
             # Converting them 

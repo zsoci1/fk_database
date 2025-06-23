@@ -99,6 +99,6 @@ class EditableTreeView(ttk.Treeview):
         self.editing_entry = None
 
         self.set(row_id, column, new_value)
-
+        
         datum = row_id.split("_")[0]  # dátum kiszedése az iid-ből
         self.update_function(self.user_id, datum, new_value)
