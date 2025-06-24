@@ -22,7 +22,7 @@
     paste this:
     cd ~/Documents/fitkitchen_database
     source venv/bin/activate
-    python ui/main.py
+    python main.py
 
     save it 
     Cmd + S 
