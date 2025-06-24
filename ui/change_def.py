@@ -356,7 +356,7 @@ class ChangeDef(ctk.CTkScrollableFrame):
     # Show subscription buttons
     def subscription_buttons(self):
         if self.pause_subscription is None:
-            self.pause_subscription = ctk.CTkButton(self, text="Előfizetés leállítása\n(mai naptól)",font=("Verdana", 16), width=200, command=self.confirmation_box)
+            self.pause_subscription = ctk.CTkButton(self, text="Előfizetés leállítása",font=("Verdana", 16), width=200, command=self.confirmation_box)
             self.pause_subscription.grid(row=22, column=0, padx=20, pady=10, sticky="w")
 
         if self.start_subscription is None:
@@ -376,7 +376,7 @@ class ChangeDef(ctk.CTkScrollableFrame):
         # Label in the middle
         self.label = ctk.CTkLabel(
             self.confirmation,
-            text="Biztosan le szeretnéd állítani az előfizetést?",
+            text="Biztosan le szeretnéd állítani az előfizetést a mai naptól kezdve?",
             font=("Verdana", 14),
             wraplength=360,
             justify="center"
