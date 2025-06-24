@@ -1,19 +1,24 @@
-1. install python  https://www.python.org/downloads/macos/
+1. install python  https://www.python.org/downloads/macos/ python3 --version
 
-2. cd ~/Documents - open terminal and navigate to the project folder
+2. cd ~/Documents - open terminal (Cmd + space) and navigate to the project folder
 
 3. create virtual environment
-    cd fitkitchen_database
+    cd Documents/fitkitchen_database
     python3 -m venv venv
     source venv/bin/activate
 
 4. install dependencies
     pip install -r requirements.txt
+    or
+    pip install customtkinter openpyxl tkcalendar
 
-5. run the app
-    python main.py
+5. initialize the database 
+    python3 database/dev_setup_db.py 
 
-6. create a mac shortcut
+6. run the app
+    python3 main.py
+
+7. create a mac shortcut
     open automator.app
     search for automator using spotlight
     choose application type
