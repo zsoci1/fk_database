@@ -496,6 +496,7 @@ def pause_subscription(customer_id, pause_start, pause_end):
 
 # PRINTING DB (for testing)
 def TEST_PRINT():
+
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
@@ -508,3 +509,5 @@ def TEST_PRINT():
     meals = cursor.execute('''SELECT * FROM meals''')
     for row in meals:
         print(row)
+
+

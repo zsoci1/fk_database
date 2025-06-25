@@ -72,7 +72,7 @@ pip install pyinstaller
 ### 7. Build the macOS App
 
 ```bash
-pyinstaller --noconfirm --windowed --name "FitKitchen" ui/main.py
+pyinstaller --noconfirm --windowed --name "FitKitchen" main.py
 ```
 
 This creates a `.app` file in the `dist/` folder.
