@@ -5,6 +5,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment
 from openpyxl.utils import get_column_letter
 from datetime import datetime
+from pathlib import Path
 
 DB_PATH = "database/meals.db"
 
@@ -16,7 +17,8 @@ def extract_group_and_clean(address):
         return 1, address.replace("#1", "").strip()
 
 def export_delivery(date_str):
-    os.makedirs("exports", exist_ok=True)
+    EXPORT_DIR = Path.home() / "Desktop/fitkitchen_database/exports"
+    EXPORT_DIR.mkdir(parents=True, exist_ok=True)
 
     
     conn = sqlite3.connect(DB_PATH)
@@ -114,7 +116,7 @@ def export_delivery(date_str):
     ws.column_dimensions["F"].width = 30  # Comment
 
     
-    filename = f"exports/delivery_{date_str}.xlsx"
+    filename = EXPORT_DIR / f"delivery_{date_str}.xlsx"
     wb.save(filename)
     print(f"[✓] Delivery export completed → {filename}")
 
@@ -153,7 +155,8 @@ def get_kitchen_summary(date_str):
     return summary
 
 def export_kitchen(date_str):
-    os.makedirs("exports", exist_ok=True)
+    EXPORT_DIR = Path.home() / "Desktop/fitkitchen_database/exports"
+    EXPORT_DIR.mkdir(parents=True, exist_ok=True)
 
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
@@ -236,6 +239,6 @@ def export_kitchen(date_str):
 
     ws.column_dimensions["A"].width = 12
 
-    filename = f"exports/kitchen_{date_str}.xlsx"
+    filename = EXPORT_DIR / f"exports/kitchen_{date_str}.xlsx"
     wb.save(filename)
     print(f"[✓] Kitchen export completed → {filename}")

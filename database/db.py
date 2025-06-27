@@ -1,5 +1,6 @@
 import sqlite3
 import io
+from pathlib import Path
 from sqlite3 import Error
 from datetime import datetime, timedelta
 from logic.date_tools import calc_end_date, generate_meal_days, get_current_work_week
@@ -24,14 +25,21 @@ def SQLite_connection():
 def SQLite_BACKUP():
     conn = sqlite3.connect(DB_PATH)
 
-    filename = f"backups/backup_{datetime.today().strftime('%Y-%m-%d_%H-%M-%S')}.sql"
+    # Create a safe backup directory on Desktop
+    # windows BACKUP_DIR = Path("C:/Users/pelle/Desktop/FitKitchen/fitkitchen_database/backups")
+
+    BACKUP_DIR = Path.home() / "Desktop/fitkitchen_database/backups"
+    BACKUP_DIR.mkdir(parents=True, exist_ok=True)
+
+    # Compose full path for backup file
+    filename = BACKUP_DIR / f"backup_{datetime.today().strftime('%Y-%m-%d_%H-%M-%S')}.sql"
 
     with io.open(filename, 'w', encoding="UTF8") as p:
         for line in conn.iterdump():
             p.write('%s\n' % line)
     
-    print(' Backup perfomed successfully! ')
-    print(f' Data Saved as {filename}')
+    print(' Backup performed successfully!')
+    print(f' Data saved as {filename}')
 
     conn.close()
 
@@ -509,5 +517,7 @@ def TEST_PRINT():
     meals = cursor.execute('''SELECT * FROM meals''')
     for row in meals:
         print(row)
+
+SQLite_BACKUP()
 
 
