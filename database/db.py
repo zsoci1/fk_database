@@ -518,6 +518,5 @@ def TEST_PRINT():
     for row in meals:
         print(row)
 
-SQLite_BACKUP()
 
 
