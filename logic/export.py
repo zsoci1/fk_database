@@ -17,7 +17,8 @@ def extract_group_and_clean(address):
         return 1, address.replace("#1", "").strip()
 
 def export_delivery(date_str):
-    EXPORT_DIR = Path.home() / "Desktop/fitkitchen_database/exports"
+    EXPORT_DIR = Path("C:/Users/pelle/Desktop/FitKitchen/fitkitchen_database/backups")
+    # EXPORT_DIR = Path.home() / "Desktop/fitkitchen_database/exports"
     EXPORT_DIR.mkdir(parents=True, exist_ok=True)
 
     

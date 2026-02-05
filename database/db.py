@@ -26,9 +26,9 @@ def SQLite_BACKUP():
     conn = sqlite3.connect(DB_PATH)
 
     # Create a safe backup directory on Desktop
-    # windows BACKUP_DIR = Path("C:/Users/pelle/Desktop/FitKitchen/fitkitchen_database/backups")
+    BACKUP_DIR = Path("C:/Users/pelle/Desktop/FitKitchen/fitkitchen_database/backups")
 
-    BACKUP_DIR = Path.home() / "Desktop/fitkitchen_database/backups"
+    # BACKUP_DIR = Path.home() / "Desktop/fitkitchen_database/backups"
     BACKUP_DIR.mkdir(parents=True, exist_ok=True)
 
     # Compose full path for backup file
