@@ -11,8 +11,8 @@ The language of the UI and the documentation of the codebase is Hungarian.
 
 For the database, SQLite was used since the client wanted to store all data locally on their computer.
 A relational database was created with two tables, one that holds information about the customers and the other about the meals for a given date. 
-UI - customtkinter
-Writing Excel files - openpyxl
+- UI - customtkinter
+- Writing Excel files - openpyxl
 
 
 UI design and collaborator: @dop14
